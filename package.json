@@ -45,7 +45,6 @@
     "express": "^4.16.3",
     "express-ejs-layouts": "~1.1.0",
     "express-session": "^1.15.6",
-    "fontawesome": "^5.6.3",
     "jdbc": "^0.6.3",
     "jquery": "^2.2.4",
     "jquery-validation": "^1.18.0",
@@ -67,7 +66,6 @@
     "passport-remember-me": "~0.0.1",
     "password-generator": "~2.0.1",
     "pg": "^4.4.3",
-    "popper": "^1.14.7",
     "popper.js": "^1.14.7",
     "ui-select": "^0.19.8"
   },

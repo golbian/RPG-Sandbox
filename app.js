@@ -6,7 +6,6 @@ const path = require('path');
 var passport = require('passport');
 var session = require('express-session');
 
-const MongoStore = require('connect-mongo')(session);
 
 var cookieParser = require('cookie-parser');
 
@@ -19,17 +18,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.use(cookieParser());
-
-app.use(session({
-    secret: 'Rpg-sandbox',
-    cookie: {
-        httpOnly: true,
-        secure: false,
-    },
-    store: mongoStore,
-    resave: false,
-    saveUninitialized: true
-}));
 
 app.use(function (req, res, next) {
     if (!req.session) {
@@ -56,11 +44,10 @@ if (authentication) {
 
 global.config = config;
 
-require('./server/config/mongoose')();
+require('./server/config/mariadb')();
 require('./server/config/passport')(passport);
 
 require('./server/globals');
-require('./server/config/mailer');
 
 require('./server/config/routes')(app, passport);
 

@@ -92,7 +92,8 @@ gulp.task('dist:css', ['clean:css'], function () {
 
 gulp.task('dist:fonts', ['clean:fonts'], function () {
     const paths = [
-        'node_modules/fontawesome/fonts/*',
+        'node_modules/@fortawesome/fontawesome-free/webfonts/*',
+
     ];
 
     return gulp.src(paths)
