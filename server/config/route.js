@@ -1,4 +1,4 @@
-const debug = require('debug')('urungi:server');
+const debug = require('debug')('RPG-Sandbox:server');
 
 module.exports = function (app, passport) {
     var hash = require('../util/hash');
@@ -12,9 +12,9 @@ module.exports = function (app, passport) {
         res.render('login');
     });
 
-    app.get('/partial/:name', api.partial);
-    app.get('/partial/:controller/:name', api.controllerPartial);
-    app.get('/partial/custom/:controller/:name', api.controllerCustomPartial);
+    app.get('/view/:name', api.partial);
+    app.get('/view/:controller/:name', api.controllerPartial);
+    app.get('/view/custom/:controller/:name', api.controllerCustomPartial);
 
     app.get('/auth/google', passport.authenticate('google'));
 

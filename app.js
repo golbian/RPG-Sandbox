@@ -6,11 +6,19 @@ const path = require('path');
 var passport = require('passport');
 var session = require('express-session');
 
-const MongoStore = require('connect-mongo')(session);
-
 var cookieParser = require('cookie-parser');
 
 var app = express();
+
+const mariadb = require('mariadb');
+mariadb
+ .createConnection({
+   host: 'localhost',
+   ssl: true,
+   user: 'Goliatt',
+   password:'spyro13620',
+   database:'RPG-Sandbox'
+ }).then(conn => {})
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
