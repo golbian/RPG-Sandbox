@@ -117,20 +117,20 @@ angular.module('login', [])
                         $scope.loginError = false;
 
                         var theUser = data.user;
+
                         connection.get('/api/get-user-data', {}, function (data) {
                             if ($scope.rememberMe) {
                                 $localStorage.setObject('user', user);
                             }
                             theUser.companyData = data.items.companyData;
                             theUser.rolesData = data.items.rolesData;
-                            theUser.reportsCreate = data.items.reportsCreate;
-                            theUser.dashboardsCreate = data.items.dashboardsCreate;
+                            theUser.mapsCreate = data.items.mapsCreate;
+                            theUser.gamesCreate = data.items.gamesCreate;
                             theUser.pagesCreate = data.items.pagesCreate;
                             theUser.exploreData = data.items.exploreData;
                             theUser.isWSTADMIN = data.items.isWSTADMIN;
                             theUser.contextHelp = data.items.contextHelp;
                             theUser.dialogs = data.items.dialogs;
-                            theUser.viewSQL = data.items.viewSQL;
                             $rootScope.user = theUser;
                             $sessionStorage.setObject('user', theUser);
                             $rootScope.loginRedirect();
@@ -152,9 +152,74 @@ angular.module('login', [])
         }
     });
 
-angular.module('urungi-login').run(['$http', '$rootScope', '$sce', '$sessionStorage', 'connection',
+angular.module('login').run(['$http', '$rootScope', '$sce', '$sessionStorage', 'connection',
     function ($http, $rootScope, $sce, $sessionStorage, connection) {
         $rootScope.loginRedirect = function () {
             window.location.href = '/#/home';
         };
+        const config = require('config');
+        global.config = config;
+
+
+        const hash = require('../server/util/hash');
+
+        require('../server/config/mongoose')();
+        const Users = connection.model('Users');
+        const Companies = connection.model('Companies');
+
+        if (process.argv.length !== 3) {
+            console.error('Usage: node first-time-setup.js PASSWORD');
+            process.exit(1);
+        }
+
+        (async function () {
+            let company = await Companies.findOne({ companyID: 'COMPID' });
+            if (company) {
+                console.error('Company COMPID already exists. 1st time setup has already been done');
+                process.exit(1);
+            }
+
+            const user = await Users.findOne({ userName: 'Goliatt' });
+            if (user) {
+                console.error('User Goliatt already exists. 1st time setup has already been done');
+                process.exit(1);
+            }
+
+            const theCompany = {
+                companyID: 'COMPID',
+                createdBy: 'RPG-Sandbox setup',
+                nd_trash_deleted: false,
+            };
+            company = await Companies.create(theCompany);
+
+            function hashPassword (password) {
+                return new Promise(function (resolve, reject) {
+                    hash(password, function (err, salt, hash) {
+                        if (err) {
+                            return reject(err);
+                        }
+
+                        resolve({ salt: salt, hash: hash });
+                    });
+                });
+            }
+
+            const password = process.argv[2];
+            const result = await hashPassword(password);
+
+            const adminUser = {
+                userName: 'Goliatt',
+                salt: result.salt,
+                hash: result.hash,
+                companyID: company.companyID,
+                roles: ['WSTADMIN'],
+                status: 'active',
+                nd_trash_deleted: false,
+            };
+
+            await Users.create(adminUser);
+
+            connection.close();
+        })();
+
 }]);

@@ -1,6 +1,7 @@
 const config = require('config');
 global.config = config;
 
+
 const hash = require('../server/util/hash');
 
 require('../server/config/mongoose')();
@@ -19,15 +20,15 @@ if (process.argv.length !== 3) {
         process.exit(1);
     }
 
-    const user = await Users.findOne({ userName: 'administrator' });
+    const user = await Users.findOne({ userName: 'Goliatt' });
     if (user) {
-        console.error('User administrator already exists. 1st time setup has already been done');
+        console.error('User Goliatt already exists. 1st time setup has already been done');
         process.exit(1);
     }
 
     const theCompany = {
         companyID: 'COMPID',
-        createdBy: 'urungi setup',
+        createdBy: 'RPG-Sandbox setup',
         nd_trash_deleted: false,
     };
     company = await Companies.create(theCompany);
@@ -48,7 +49,7 @@ if (process.argv.length !== 3) {
     const result = await hashPassword(password);
 
     const adminUser = {
-        userName: 'administrator',
+        userName: 'Goliatt',
         salt: result.salt,
         hash: result.hash,
         companyID: company.companyID,

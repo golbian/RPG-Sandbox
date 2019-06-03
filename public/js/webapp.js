@@ -1,8 +1,8 @@
-'use strict';
+  'use strict';
 
 angular.module('app', [
     'ngRoute', 'ui.sortable', 'draganddrop', 'ui.bootstrap',
-    'urungi.directives', 'ngSanitize', 'ui.select', 'angularUUID2', 'vs-repeat',
+    'RPG-Sandbox.directives', 'ngSanitize', 'ui.select', 'angularUUID2', 'vs-repeat',
     'ui.bootstrap.datetimepicker', 'ui.tree', 'page.block', 'bsLoadingOverlay', 'xeditable',
     'intro.help', 'ngFileUpload', 'colorpicker.module',
     'wst.inspector', 'gettext', 'ngFileSaver'
@@ -11,65 +11,74 @@ angular.module('app', [
         $routeProvider.otherwise({redirectTo: '/home'});
 
         $routeProvider.when('/home', {
-            templateUrl: 'view/home/index.html',
+            templateUrl: 'partials/home/index.html',
             controller: 'homeCtrl'
         });
 
         $routeProvider.when('/about', {
-            templateUrl: 'view/home/about.html',
+            templateUrl: 'partials/home/about.html',
             controller: 'homeCtrl'
         });
 
-        $routeProvider.when('/gameList', {
-            templateUrl: 'view/menu-list/gameList.html',
+        $routeProvider.when('/logout', {
+            templateUrl: 'partials/home/logout.html',
+            controller: 'logOutCtrl'
+        });
+
+        $routeProvider.when('/users', {
+            templateUrl: 'partials/user/view.html',
+            controller: 'userCtrl'
+        });
+
+        $routeProvider.when('/search', {
+            templateUrl: 'partials/search/view.html',
+            controller: 'searchCtrl'
+        });
+
+        $routeProvider.when('/useredit', {
+            templateUrl: 'partials/user/edit.html',
+            controller: 'userCtrl'
+        });
+
+        $routeProvider.when('/gamelist', {
+            templateUrl: 'partials/menu-list/gameList.html',
             controller: 'gameListCtrl'
         });
 
         $routeProvider.when('/view/:gameID', {
-            templateUrl: 'view/game/view.html',
+            templateUrl: 'partials/game/view.html',
             controller: 'gameCtrl'
         });
 
         $routeProvider.when('/view/new/:newGame/', {
-            templateUrl: 'view/game/edit.html',
+            templateUrl: 'partials/game/edit.html',
             controller: 'gameCtrl'
         });
 
         $routeProvider.when('/view/game/edit/:gameID/', {
-            templateUrl: 'view/game/edit.html',
+            templateUrl: 'partials/game/edit.html',
             controller: 'gameCtrl'
         });
 
 
         $routeProvider.when('/editor', {
-            templateUrl: 'view/editor/editor.html',
+            templateUrl: 'partials/editor/editor.html',
             controller: 'editorCtrl'
         });
 
-        // pages
-        $routeProvider.when('/pages', {
-            templateUrl: 'partials/pages/list.html',
-            controller: 'pagesCtrl'
-        });
-        $routeProvider.when('/page/:extra', {
-            templateUrl: 'partials/pages/list.html',
-            controller: 'pagesCtrl'
+        $routeProvider.when('/import', {
+            templateUrl: 'partials/io/import.html',
+            controller: 'ioCtrl'
         });
 
-        $routeProvider.when('/pages/:pageID', {
-            templateUrl: 'partials/pages/view.html',
-            controller: 'pagesCtrl'
-        });
+        $routeProvider.when('/export', {
+            templateUrl: 'partials/io/export.html',
+            controller: 'ioCtrl'
+});
 
-        $routeProvider.when('/pages/edit/:pageID/', {
-            templateUrl: 'partials/pages/edit.html',
-            controller: 'pagesCtrl'
-        });
 
-        $routeProvider.when('/pages/new/:newPage/', {
-            templateUrl: 'partials/pages/edit.html',
-            controller: 'pagesCtrl'
-        });
+
+
 
     }])
     .factory('$sessionStorage', ['$window', function ($window) {
@@ -137,8 +146,8 @@ angular.module('app').service('gameService', function () {
     };
 
     return {
-        addReport: addGame,
-        getReport: getGame
+        addGame: addGame,
+        getGame: getGame
     };
 });
 

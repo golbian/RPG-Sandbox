@@ -2,6 +2,7 @@
 const path = require('path');
 const debug = require('debug')('RPG-Sandbox:server');
 
+
 var appRoot = path.join(__dirname, '..');
 global.appRoot = appRoot;
 

@@ -6,30 +6,30 @@ const path = require('path');
 var passport = require('passport');
 var session = require('express-session');
 
+const MongoStore = require('connect-mongo')(session);
+
 var cookieParser = require('cookie-parser');
 
 var app = express();
-
-const mariadb = require('mariadb');
-mariadb
- .createConnection({
-   host: 'localhost',
-   ssl: true,
-   user: 'Goliatt',
-   password:'spyro13620',
-   database:'RPG-Sandbox'
- }).then(conn => {})
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'shared')));
 app.use(express.static(path.join(__dirname, 'dist')));
 
+const mongooseConnection = require('mongoose').createConnection(config.get('db'));
+const mongoStore = new MongoStore({
+    mongooseConnection: mongooseConnection,
+    collection: 'wst_Sessions',
+    ttl: 60 * 60 * 24, // 24 hours
+});
+app.locals.mongooseConnection = mongooseConnection;
 app.use(cookieParser());
 
 app.use(session({
-    secret: 'Rpg-sandbox',
+    secret: 'ndRPG-Sandboxv0',
     cookie: {
         httpOnly: true,
         secure: false,
@@ -78,6 +78,7 @@ app.use('/uploads', restrict, express.static(path.join(__dirname, 'uploads')));
 
 // Custom routes
 var routes_dir = path.join(__dirname, 'server', 'custom');
+
 fs.readdirSync(routes_dir).forEach(function (file) {
     if (file[0] === '.') return;
     require(routes_dir + '/' + file + '/routes.js')(app);

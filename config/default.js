@@ -1,15 +1,28 @@
 module.exports = {
-    url: 'http://localhost:3306/',
-    ip: '0.0.0.0',
-    port: 8080,
-    db_type: ' MariaDB', // tingoDB or mongoDB
+    url: undefined,
+    ip: undefined,
+    port: undefined,
+    db_type: 'mongoDB', // tingoDB or mongoDB
 
     // MongoDB connection string
     // See https://docs.mongodb.com/manual/reference/connection-string/
-    db: 'RPG-Sandbox',
+    db: undefined,
 
-    sql_db: true,
+    session: {
+        secret: 'Golbian',
+    },
 
+    mailer: {
+        service: 'SMTP', // SMTP, sendgrid, mandrill, etc... list of services nodemailer-wellknown
+        host: 'smtp.yourserver.com', // hostname
+        secureConnection: false, // use SSL
+        port: 25, // port for secure SMTP
+        auth: {
+            user: 'no_reply@yourserver.com',
+            pass: 'yourpassword',
+        },
+        from: 'no_reply@yourserver.com',
+    },
     google: {
         clientID: 'your client id',
         clientSecret: 'your client secret',
