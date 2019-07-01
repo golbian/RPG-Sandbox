@@ -1,0 +1,52 @@
+<div ng-show="!mapInterface" id="mainContainer" class="explorer-main-container" >
+
+<div class="explorer-container">
+
+    <div class="explorer-header" ng-init="initForm()">
+
+        <div class="explorer-header-title">
+            <h3 class="pull-left" editable-text="selectedGame.gameName">{{ selectedGame.gameName }}</h3>
+        </div>
+
+        <div class="explorer-header-buttons">
+            <a id="saveGameBtn" data-ng-click="gameName()" class="btn btn-success" style="margin-left: 5px" uib-tooltip="{{'Click here to save the game changes' | translate}}" tooltip-placement="bottom" translate>Save</a>
+
+            <a ng-click="goBack();" class="btn btn-default" uib-tooltip="{{'Click here to cancel and backtrack' | translate}}" tooltip-placement="bottom">Cancel</a>
+        </div>
+
+    </div>
+
+
+    <div class="explorer-body">
+
+        <div id="select-box" ng-hide="dragging" >
+
+        </div>
+    <section  class="content">
+
+    </section>
+</div>
+    </div>
+</div>
+
+<div ng-show="mapInterface" id="mapModal" ng-controller="mapCtrl" ng-include src="mapModal"></div>
+
+<nd-modal id="gameNameModal">
+    <div class="modal-body">
+        <form class="simple-form" role="form" name="gameForm">
+            <div class="form-group">
+                <label translate>Game Name</label>
+                <input name="gameName" type="text" class="form-control" ng-model="selectedGame.gameName" ng-required="true" required >
+                <span ng-show="gameForm.gameName.$invalid" class="help-inline" translate>The game name is required</span>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="gameNameSave()" ng-disabled="mapForm.$invalid" class="btn btn-primary submit-btn pull-right" translate>Save</button>
+        <button type="button" class="btn pull-right" data-dismiss="modal" translate>Cancel</button>
+    </div>
+</nd-modal>
+
+<file-modal></file-modal>
+
+<div id="previewContainer" ng-show="false"></div>

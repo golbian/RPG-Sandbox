@@ -35,7 +35,6 @@ class Controller {
         var page = (req.query.page) ? req.query.page : 1;
         var find = {};
         var searchText = (req.query.search) ? req.query.search : false;
-        var filters = (req.query.filters) ? JSON.parse(req.query.filters) : false;
         var fields = {};
         var fieldsToGet = (req.query.fields) ? req.query.fields : false;
         var params = {};
@@ -111,18 +110,6 @@ class Controller {
             }
             searchFind = (findFields.length > 0) ? { $or: findFields } : {};
         }
-
-        if (filters) {
-            var filterObject = {};
-            for (const f in filters) {
-                filterObject[f] = new RegExp(filters[f], 'i');
-            }
-            mandatoryFilters.push(filterObject);
-        }
-
-        if (Object.keys(searchFind).length > 0) { mandatoryFilters.push(searchFind); }
-
-        if (mandatoryFilters.length > 0) { find = { $and: mandatoryFilters }; }
 
         return { find: find, fields: fields, params: params };
     }

@@ -1,0 +1,60 @@
+<div class="list-group">
+    <div class="list-group-item active">
+        <a href="/#/users/{{vm.user._id}}/" style="color: #fff;">
+            <i class="fa fa-fw fa-user"></i>
+            {{vm.user.userName}}
+        </a>
+        <a href="/#/logout" class="badge">
+            <span translate>logout</span>
+            <i class="fa fa-sign-out" style="color: #f00;"></i>
+        </a>
+    </div>
+
+    <a id="homeMainMenu" href="/#/home" class="list-group-item ">
+        <i class="fa fa-fw fa-home"></i>
+        <span translate>Home</span>
+    </a>
+    <a id="gamesMainMenu" ng-if="vm.user.gamesCreate || vm.counts.dashBoards > 0" href="/#/games/list" class="list-group-item ">
+       <i class="fa fa-fw fa-game"></i>
+       <span translate>My Games</span>
+       <span class="badge">{{vm.counts.dashBoards}}</span>
+    </a>
+    <a id="mapsMainMenu" ng-if="vm.user.mapsCreate || vm.counts.maps > 0" href="/#/maps" class="list-group-item">
+       <i class="fa fa-fw fa-bar-chart"></i>
+       <span translate>My Maps</span>
+       <span class="badge">{{vm.counts.maps}}</span>
+    </a>
+    <a id="exploreMainMenu" ng-if="vm.user.exploreData" href="/#/explore" class="list-group-item">
+        <i class="fa fa-fw fa-sun-o"></i>
+        <span translate>Explore</span>
+    </a>
+    <a id="sharedSpaceMainMenu" ng-show="vm.user.isWSTADMIN" href="/#/shared-space" class="list-group-item">
+        <i class="fa fa-fw fa-sitemap"></i>
+        <span translate>Shared space</span>
+    </a>
+    <a id="rolesMainMenu" ng-show="vm.user.isWSTADMIN" href="/#/roles" class="list-group-item">
+        <i class="fa fa-fw fa-users"></i>
+        <span translate>Roles</span>
+        <span class="badge">{{vm.counts.roles}}</span>
+    </a>
+    <a id="usersMainMenu" ng-show="vm.user.isWSTADMIN" href="/#/users" class="list-group-item">
+        <i class="fa fa-fw fa-user"></i>
+        <span translate>Users</span>
+        <span class="badge">{{vm.counts.users}}</span>
+    </a>
+    <a id="usersImport" ng-show="vm.user.isWSTADMIN" href="/#/import" class="list-group-item">
+        <i class="fa fa-fw fa-upload"></i>
+        <span translate>Import</span>
+    </a>
+    <a id="usersExport" ng-show="vm.user.isWSTADMIN" href="/#/export" class="list-group-item">
+        <i class="fa fa-fw fa-download"></i>
+        <span translate>Export</span>
+    </a>
+    <a id="aboutMenu" href="/#/about" class="list-group-item">
+        <i class="fa fa-fw fa-question-circle"></i>
+        <span translate>About</span>
+    </a>
+    <span class="list-group-item main-menu-logo" >
+        <img src="images/RPG-Sandbox.jpg" class="img-responsive">
+    </span>
+</div>

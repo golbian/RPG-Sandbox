@@ -3,11 +3,9 @@ var mongoose = require('mongoose');
 var MapsSchema = new mongoose.Schema({
     companyID: { type: String },
     mapName: { type: String, required: true },
-    mapType: { type: String },
     mapDescription: { type: String },
     mapSubType: { type: String },
     properties: { type: Object },
-    query: { type: Object },
     owner: { type: String },
     createdBy: { type: String },
     author: { type: String },

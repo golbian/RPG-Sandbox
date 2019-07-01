@@ -1,3 +1,4 @@
+/* global moment: false */
 angular.module('app').controller('homeCtrl', ['$scope', '$rootScope', '$q', 'connection', 'gettextCatalog', 'userService', 'api', function ($scope, $rootScope, $q, connection, gettextCatalog, userService, api) {
     $scope.gamesNbr = 3;
     $scope.mapsNbr = 10;

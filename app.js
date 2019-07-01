@@ -29,14 +29,15 @@ app.locals.mongooseConnection = mongooseConnection;
 app.use(cookieParser());
 
 app.use(session({
-    secret: 'ndRPG-Sandboxv0',
+    secret: config.get('session.secret'),
     cookie: {
         httpOnly: true,
         secure: false,
     },
     store: mongoStore,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    unset: 'destroy',
 }));
 
 app.use(function (req, res, next) {
@@ -47,7 +48,7 @@ app.use(function (req, res, next) {
 });
 
 var bodyParser = require('body-parser');
-app.use(bodyParser.json({limit: '50mb'})); // get information from html forms
+app.use(bodyParser.json({ limit: '50mb' })); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var authentication = true;
@@ -78,7 +79,6 @@ app.use('/uploads', restrict, express.static(path.join(__dirname, 'uploads')));
 
 // Custom routes
 var routes_dir = path.join(__dirname, 'server', 'custom');
-
 fs.readdirSync(routes_dir).forEach(function (file) {
     if (file[0] === '.') return;
     require(routes_dir + '/' + file + '/routes.js')(app);

@@ -2,7 +2,7 @@ module.exports = function (app) {
     var users = require('./controller.js');
     app.get('/api/admin/users/find-all', restrictRole(['WSTADMIN']), users.UsersFindAll);
     app.get('/api/admin/users/find-one', restrict, users.UsersFindOne);
-    app.post('/api/admin/users/create', restrict, users.UsersCreate);
+    app.post('/api/admin/users/create', restrictRole(['WSTADMIN']), users.UsersCreate);
     app.post('/api/admin/users/update/:id', restrictRole(['WSTADMIN']), users.UsersUpdate);
     app.post('/api/admin/users/delete/:id', restrictRole(['WSTADMIN']), users.UsersDelete);
     app.post('/api/admin/users/change-user-status', restrictRole(['WSTADMIN']), users.changeUserStatus);

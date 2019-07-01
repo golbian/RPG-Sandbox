@@ -1,0 +1,13 @@
+<script src="js/xlsx.core.min.js"></script>
+
+<div class="container-fluid">
+    <div class="page-header">
+        <span class="h3" ng-bind="vm.map.mapName"></span>
+        <a ng-if="vm.map && ((vm.map.owner == user._id) || isWSTADMIN)" ng-href="/#/maps/edit/{{vm.map._id}}"  class="btn btn-success pull-right" style="margin-right: 5px;" translate>Edit Report</a>
+        <a ng-click="goBack()" class="btn btn-default pull-right" translate>Cancel</a>
+        <a ng-show="vm.map.mapType === 'grid'" ng-click="vm.saveAsXLSX()" class="btn btn-default pull-right" translate>Export Data</a>
+    </div>
+</div>
+
+    <div map-view map="vm.map" mode="'preview'" style="height: 100%;"></div>
+</div>

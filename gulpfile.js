@@ -54,7 +54,10 @@ gulp.task('dist:js', ['clean:js'], function () {
       'node_modules/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
       'node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js',
       'node_modules/angular-gettext/dist/angular-gettext.min.js',
-        'node_modules/d20/d20.js',        /*'node_modules/canvas/lib/canvas.js',
+        'node_modules/d20/d20.js',
+        'node_modules/canvas/lib/canvas.js',
+        'node_modules/fabric/dist/fabric.min.js',
+        /*
         'node_modules/canvas/lib/context2d.js',
         'node_modules/canvas/lib/bindings.js',
         'node_modules/canvas/lib/DOMMatrix.js',
@@ -65,7 +68,7 @@ gulp.task('dist:js', ['clean:js'], function () {
         'node_modules/canvas/lib/pngstream.js',
         'node_modules/blob/index.js',
         'node_modules/canvas-toBlob/canvas-toBlob.js',
-        'node_modules/fabric/dist/fabric.js',
+
         'node_modules/socket.io/lib/client.js',
         'node_modules/socket.io/lib/index.js',
         'node_modules/socket.io/lib/namespace.js',

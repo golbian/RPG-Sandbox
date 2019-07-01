@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html id="ng-app" ng-app="login">
+<html id="ng-app" ng-app="app-login">
 
 <head>
     <meta charset="utf-8" />
@@ -11,6 +11,10 @@
 
     <script src="/js/bundle.min.js"></script>
     <script src="/js/login.js"></script>
+    <script src="/js/core/core.module.js"></script>
+    <script src="/js/core/session-storage.js"></script>
+    <script src="/js/core/local-storage.js"></script>
+<script src="/js/core/connection.js"></script>
 </head>
 
 
@@ -76,7 +80,7 @@
                   </div>
 
                   <div class="alert alert-danger" ng-if="SignInError == true">
-                      {{errorLoginMessage}}
+                      {{errorSignInMessage}}
                   </div>
               </form>
 

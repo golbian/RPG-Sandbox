@@ -22,12 +22,11 @@
                     const user = data.items.user;
                     user.companyData = data.items.companyData;
                     user.rolesData = data.items.rolesData;
-                    user.reportsCreate = data.items.reportsCreate;
-                    user.dashboardsCreate = data.items.dashboardsCreate;
+                    user.mapsCreate = data.items.mapsCreate;
+                    user.gamesCreate = data.items.gamesCreate;
                     user.pagesCreate = data.items.pagesCreate;
                     user.exploreData = data.items.exploreData;
                     user.isWSTADMIN = data.items.isWSTADMIN;
-                    user.viewSQL = data.items.viewSQL;
 
                     return user;
                 });

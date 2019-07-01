@@ -1,0 +1,22 @@
+<div id="mainContainer" class="container-fluid root-container">
+    <div class="row">
+        <div class="main col-md-3">
+            <app-sidebar show-intro="vm.showIntro()"></app-sidebar>
+        </div>
+
+        <div class="main col-md-9">
+            <div class="page-header">
+                <span class="h3" translate>Maps</span>
+
+                <a id="newMapButton" ng-if="vm.creationAuthorised" href="/#/maps/new/" class="btn btn-success pull-right" uib-tooltip="{{ 'Click here to create a new single query map' | translate }}" tooltip-placement="bottom" translate>Create new map</a>
+                <a class="btn btn-info pull-right" ng-click="vm.showIntro()" style="margin-right: 3px;" uib-tooltip="{{ 'Follow the guided tour for maps' | translate }}" tooltip-placement="bottom"><i class="fa fa-question-circle"></i></a>
+            </div>
+
+            <app-list-panel columns="vm.columns" refresh="vm.refresh">
+                <div class="list-group-item" ng-repeat="map in vm.maps">
+                    <app-maps-list-item map="map" on-delete="vm.refresh()" on-duplicate="vm.refresh()"></app-maps-list-item>
+                </div>
+            </app-list-panel>
+        </div>
+    </div>
+</div>

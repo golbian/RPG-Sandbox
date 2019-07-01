@@ -6,7 +6,6 @@ var GamesSchema = new mongoose.Schema({
     gameDescription: { type: String },
     gameType: { type: String },
     items: [],
-    backgroundColor: { type: String },
     properties: { type: Object },
     history: [],
     nd_trash_deleted: { type: Boolean },

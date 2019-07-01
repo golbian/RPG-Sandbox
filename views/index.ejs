@@ -4,9 +4,7 @@
 
 <link rel="stylesheet" href="css/bundle.min.css">
 
-<!--angular ui tree-->
 <link rel="stylesheet" type="text/css" href="css/jsPlumb.css"/>
-
 
 <link rel="stylesheet" type="text/css" href="css/components.css"/>
 
@@ -18,47 +16,60 @@
 
 <body>
 
-<div ng-view  ng-intro-options="IntroOptions" ng-intro-method="CallMe">
+<div ng-view>
 
 </div>
 
 </body>
 
 <script src="js/bundle.min.js"></script>
-
-<!-- RPG-Sandbox directives -->
-<script src="js/directives/wst-directives.js"></script>
-<script src="js/modules/intro-help.js"></script>
+<script src="templates/templates.js"></script>
 
 <!-- angular app -->
 <script type="text/javascript" src="js/webapp.js"></script>
-<script type="text/javascript" src="js/services.js"></script>
+<script type="text/javascript" src="js/core/core.module.js"></script>
+<script type="text/javascript" src="js/core/api.js"></script>
+<script type="text/javascript" src="js/core/connection.js"></script>
+<script type="text/javascript" src="js/core/session-storage.js"></script>
+<script type="text/javascript" src="js/core/local-storage.js"></script>
+<script type="text/javascript" src="js/core/user.service.js"></script>
+<script type="text/javascript" src="js/core/pager.component.js"></script>
+<script type="text/javascript" src="js/core/list-panel.component.js"></script>
+<script type="text/javascript" src="js/core/language-select.component.js"></script>
+<script type="text/javascript" src="js/core/share-popover.component.js"></script>
+<script type="text/javascript" src="js/core/delete-modal.component.js"></script>
+<script type="text/javascript" src="js/core/duplicate-modal.component.js"></script>
+<script type="text/javascript" src="js/core/share-modal.component.js"></script>
+<script type="text/javascript" src="js/sidebar/sidebar.module.js"></script>
+<script type="text/javascript" src="js/sidebar/sidebar.component.js"></script>
 <script type="text/javascript" src="js/directives/modal.js"></script>
 <script type="text/javascript" src="js/home/controller.js"></script>
-<script type="text/javascript" src="js/menu-list/controllers.js"></script>
-<script type="text/javascript" src="js/services/pager.js"></script>
 <script type="text/javascript" src="js/services/language.js"></script>
 <script type="text/javascript" src="js/map/controller.js"></script>
 <script type="text/javascript" src="js/map/model.js"></script>
-<script type="text/javascript" src="js/map/services/grid.js"></script>
-<script type="text/javascript" src="js/map/services/vGrid.js"></script>
-<script type="text/javascript" src="js/map/services/pivot.js"></script>
-<script type="text/javascript" src="js/map/services/elements.js"></script>
 <script type="text/javascript" src="js/map/directives/wstDropzone.js"></script>
 <script type="text/javascript" src="js/map/directives/mapView.js"></script>
-<script type="text/javascript" src="js/map/directives/prompts.js"></script>
-<script type="text/javascript" src="js/users/controller.js"></script>
-<script type="text/javascript" src="js/users/model.js"></script>
+<script type="text/javascript" src="js/maps/maps.module.js"></script>
+<script type="text/javascript" src="js/maps/maps.routes.js"></script>
+<script type="text/javascript" src="js/maps/maps-list-item.component.js"></script>
+<script type="text/javascript" src="js/maps/maps-import-modal.component.js"></script>
+<script type="text/javascript" src="js/maps/maps-view.controller.js"></script>
+<script type="text/javascript" src="js/maps/maps-list.controller.js"></script>
+<script type="text/javascript" src="js/games/games.module.js"></script>
+<script type="text/javascript" src="js/games/games.routes.js"></script>
+<script type="text/javascript" src="js/games/games-view.controller.js"></script>
+<script type="text/javascript" src="js/games/games-list.controller.js"></script>
+<script type="text/javascript" src="js/games/games-list-item.component.js"></script>
+<script type="text/javascript" src="js/users/users.module.js"></script>
+<script type="text/javascript" src="js/users/users.routes.js"></script>
+<script type="text/javascript" src="js/users/users-list.controller.js"></script>
+<script type="text/javascript" src="js/users/users-view.controller.js"></script>
+<script type="text/javascript" src="js/users/users-edit-modal.component.js"></script>
 <script type="text/javascript" src="js/roles/controller.js"></script>
 <script type="text/javascript" src="js/logout/controller.js"></script>
 <script type="text/javascript" src="js/spaces/controller.js"></script>
 <script type="text/javascript" src="js/gamev2/controller.js"></script>
 <script type="text/javascript" src="js/gamev2/model.js"></script>
-<script type="text/javascript" src="js/inspector/page_block.js"></script>
-<script type="text/javascript" src="js/widgets/mapHtmlWidgets.js"></script>
-<script type="text/javascript" src="js/widgets/colors.js"></script>
-<script type="text/javascript" src="js/widgets/htmlWidgets.js"></script>
-<script type="text/javascript" src="js/widgets/common.js"></script>
 <script type="text/javascript" src="js/io/controller.js"></script>
 <script type="text/javascript" src="js/io/model.js"></script>
 <script type="text/javascript" src="js/files/service.js"></script>

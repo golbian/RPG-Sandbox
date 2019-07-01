@@ -1,0 +1,45 @@
+<div class="row">
+    <div class="col-md-3">
+        <a ng-href="/#/maps/view/{{ vm.map._id }}">{{ vm.map.mapName }}</a>
+        <div class="badge-list">
+            <span ng-if="vm.map.isPublic" class="badge" translate>public</span>
+            <span ng-if="vm.map.isShared" class="badge" translate>shared</span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        {{ vm.map.layerName }}
+    </div>
+
+    <div class="col-md-2">
+        {{ vm.map.author }}
+    </div>
+
+    <div class="col-md-2">
+        {{ vm.map.createdOn | date }}
+    </div>
+
+    <div class="col-md-2">
+        <a class="pull-right list-button btn-delete" ng-click="vm.openDeleteModal()" uib-tooltip="{{ 'Delete this map' | translate}}" tooltip-placement="bottom">
+            <i class="fa fa-trash-o"></i>
+        </a>
+        <a class="pull-right list-button btn-duplicate" ng-click="vm.openDuplicateModal()" uib-tooltip="{{ 'Duplicate this map' | translate}}" tooltip-placement="bottom">
+            <i class="fa fa-copy"></i>
+        </a>
+        <a class="pull-right list-button btn-edit" ng-href="/#/maps/edit/{{ vm.map._id }}" uib-tooltip="{{ 'Edit this map' | translate }}" tooltip-placement="bottom">
+            <i class="fa fa-pencil"></i>
+        </a>
+        <a class="list-button list-button-share pull-right"
+            uib-tooltip="{{ 'Share' | translate }}"
+            uib-popover-template="'share-popover.html'"
+            popover-title="Share to..."
+            popover-trigger="'outsideClick'"
+            popover-placement="left"
+            popover-append-to-body="true"
+        >
+            <i class="fa fa-share-alt"></i>
+        </a>
+    </div>
+</div>
+<script type="text/ng-template" id="share-popover.html">
+    <app-share-popover item="vm.map" publish="vm.publish" unpublish="vm.unpublish" share="vm.share" unshare="vm.unshare" get-copy-link="vm.getCopyLink"></app-share-popover>
+</script>

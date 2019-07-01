@@ -25,11 +25,6 @@
             unpublishGame: unpublishGame,
             shareGame: shareGame,
             unshareGame: unshareGame,
-
-            layersFindAll: layersFindAll,
-            changeLayerStatus: changeLayerStatus,
-            createLayer: createLayer,
-            deleteLayer: deleteLayer,
         };
 
         return service;
@@ -44,28 +39,6 @@
 
         function getUserObjects () {
             return connection.get('/api/get-user-objects').then(res => res.items);
-        }
-
-        function getDataSources (params) {
-            return connection.get('/api/data-sources/find-all', params);
-        }
-
-        function getEntitiesSchema (dataSourceID, entity) {
-            var params = {
-                datasourceID: dataSourceID,
-                entity: entity,
-            };
-
-            return connection.get('/api/data-sources/getEntitySchema', params);
-        }
-
-        function getSqlQuerySchema (dataSourceID, collection) {
-            var params = {
-                datasourceID: dataSourceID,
-                collection: collection,
-            };
-
-            return connection.get('/api/data-sources/getsqlQuerySchema', params);
         }
 
         function mapsFindAll (params) {

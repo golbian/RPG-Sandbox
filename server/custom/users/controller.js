@@ -138,6 +138,7 @@ exports.getCounts = function (req, res) {
     var isWSTADMIN = false;
 
     if (req.isAuthenticated()) {
+      console.log(req.user);
         for (var i in req.user.roles) {
             if (req.user.roles[i] === 'WSTADMIN') {
                 isWSTADMIN = true;
