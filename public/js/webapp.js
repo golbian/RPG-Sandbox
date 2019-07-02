@@ -62,10 +62,6 @@
             templateUrl: 'partials/map/edit.html',
             controller: 'mapCtrl'
         });
-        $routeProvider.when('/maps/edit/:mapID/', {
-            templateUrl: 'partials/map/edit.html',
-            controller: 'mapCtrl'
-        });
 
         // roles
         $routeProvider.when('/roles', {

@@ -1,4 +1,4 @@
-angular.module('app').directive('mapView', function ($q, $timeout, mapModel, $compile, c3Charts, mapHtmlWidgets, grid, verticalGrid, pivot, uuid2) {
+angular.module('app').directive('mapView', function ($q, $timeout, mapModel, $compile, uuid2) {
     return {
 
         scope: {

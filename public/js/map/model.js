@@ -20,6 +20,29 @@ angular.module('app').service('mapModel', function ($q, connection, FileSaver) {
         return copy;
     }
 
+    this.saveAsMap = function (map, mode) {
+        // Cleaning up the map object
+
+        // var clonedMap = clone(map);
+        // Is this necessary ? It causes c3 to crash, so I will remove it until I find a reason for it
+        var clonedMap = map;
+        if (clonedMap.properties.chart) {
+            clonedMap.properties.chart.chartCanvas = undefined;
+            clonedMap.properties.chart.data = undefined;
+            // clonedMap.properties.chart.query = undefined;
+        }
+        if (clonedMap.query.data) { clonedMap.query.data = undefined; }
+        clonedMap.parentDiv = undefined;
+
+        let url;
+        if (mode === 'add') {
+            url = '/api/maps/create';
+        } else {
+            url = '/api/maps/update/' + map._id;
+        }
+
+        return connection.post(url, clonedMap);
+    };
 
     this.duplicateMap = function (duplicateOptions) {
         const params = { id: duplicateOptions.map._id };
