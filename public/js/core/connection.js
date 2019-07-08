@@ -25,9 +25,9 @@
                     if (typeof data === 'string') window.location.href = '/';
 
                     if (data.result === 1 && data.msg && options.showMsg) {
-                        noty({ text: data.msg, timeout: 5000, type: 'success' });
+                        console.log({ text: data.msg, timeout: 5000, type: 'success' });
                     } else if (data.result === 0 && data.msg && options.showMsg) {
-                        noty({ text: data.msg, timeout: 5000, type: 'error' });
+                        console.log({ text: data.msg, timeout: 5000, type: 'error' });
                     }
 
                     return data;
@@ -44,9 +44,9 @@
                     if (typeof data === 'string') window.location.href = '/';
 
                     if (data.result === 1 && data.msg) {
-                        noty({ text: data.msg, timeout: 5000, type: 'success' });
+                        console.log({ text: data.msg, timeout: 5000, type: 'success' });
                     } else if (data.result === 0 && data.msg) {
-                        noty({ text: data.msg, timeout: 5000, type: 'error' });
+                        console.log({ text: data.msg, timeout: 5000, type: 'error' });
                     }
 
                     return data;

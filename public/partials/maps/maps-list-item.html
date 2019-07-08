@@ -1,15 +1,11 @@
 <div class="row">
     <div class="col-md-3">
-        <a ng-href="/#/maps/view/{{ vm.map._id }}">{{ vm.map.mapName }}</a>
+        <a ng-href="/#/maps/edit/{{ vm.map._id }}">{{ vm.map.mapName }}</a>
         <div class="badge-list">
             <span ng-if="vm.map.isPublic" class="badge" translate>public</span>
             <span ng-if="vm.map.isShared" class="badge" translate>shared</span>
         </div>
     </div>
-    <div class="col-md-3">
-        {{ vm.map.layerName }}
-    </div>
-
     <div class="col-md-2">
         {{ vm.map.author }}
     </div>
@@ -24,9 +20,6 @@
         </a>
         <a class="pull-right list-button btn-duplicate" ng-click="vm.openDuplicateModal()" uib-tooltip="{{ 'Duplicate this map' | translate}}" tooltip-placement="bottom">
             <i class="fa fa-copy"></i>
-        </a>
-        <a class="pull-right list-button btn-edit" ng-href="/#/maps/edit/{{ vm.map._id }}" uib-tooltip="{{ 'Edit this map' | translate }}" tooltip-placement="bottom">
-            <i class="fa fa-pencil"></i>
         </a>
         <a class="list-button list-button-share pull-right"
             uib-tooltip="{{ 'Share' | translate }}"

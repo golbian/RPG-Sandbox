@@ -1,0 +1,31 @@
+<!-- Modal -->
+
+<div class="modal " id="dashListModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+
+                <h4 class="modal-title" id="myModalLabel" translate>Select the game to push this map to</h4>
+                <a id="newGameBtn" ng-if="user.gamesCreate"  class="btn btn-success pull-right" ng-click="mapPushed2Game('new')" uib-tooltip="{{'Click here to create a new game and push this map in' | translate}}" tooltip-placement="bottom" translate>New Game</a>
+            </div>
+            <div id="searchModalBody" class="modal-body" ng-init="setHeight('searchModalBody', 'full', -118)">
+                <div  id="mapListItem" class="list-group-item" ng-repeat="game in games.items">
+
+                        <a id="pushToGameBtn" ng-click="mapPushed2Game(game._id)" class="pull-right" style="color:#000080; font-size: 16px;margin-right: 3px;" uib-tooltip="{{'Click here to modify this game' | translate}}" tooltip-placement="bottom" translate>
+                            push
+                        </a>
+
+                        <a   ng-click="mapPushed2Game(game._id)"  uib-tooltip="{{'Click here to select this game' | translate}}" tooltip-placement="bottom">
+                            <h4 id="mapListItemName" class="list-group-item-heading" ng-bind="game.gameName"></h4>
+                            <p id="mapListItemDetails" class="list-group-item-text" ng-bind="game.gameDescription"></p>
+                        </a>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>

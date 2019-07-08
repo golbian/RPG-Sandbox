@@ -1,24 +1,55 @@
-<div id="bd-wrapper" ng-controller="mapCtrl">
+<div id="bd-wrapper">
 
 <link href='http://fonts.googleapis.com/css?family=Plaster' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Engagement' rel='stylesheet' type='text/css'>
 
-<div style="position:relative;width:804px;float:left;" id="canvas-wrapper">
-  <canvas id="canvas" width="800" height="600"></canvas>
+        <div class="explorer-header-title">
+                <h3   editable-text="selectedMap.mapName" blur="submit">{{ selectedMap.mapName }}</h3>
+
+        </div>
+
+    <div class="explorer-header-buttons">
+                <a id="saveMapBtn" data-ng-click="mapName()" class="btn btn-success pull-right" style="margin-left: 5px" uib-tooltip="{{'Click here to save the map changes' | translate}}" tooltip-placement="bottom" translate>Save</a>
+
+                <a ng-if="isForGame != true" ng-click="goBack();" class="btn btn-default pull-right" uib-tooltip="{{'Click here to cancel and backtrack' | translate}}" tooltip-placement="bottom" translate>Cancel</a>
+                <a ng-if="isForGame == true" ng-click="cancelMap(selectedMap);" class="btn btn-default pull-right" uib-tooltip="{{'Click here to cancel and back to the game' | translate}}" tooltip-placement="bottom" translate>Cancel</a>
+    </div>
+
+<div class="row">
+<div class="col-md-9" style="position:relative;width:auto;float:left;" id="canvas-wrapper">
+  <canvas id="canvas" width="1400" height="910"></canvas>
 </div>
 
-<div id="commands" ng-click="maybeLoadShape($event)">
+<div class="col-md-3" id="commands" ng-click="maybeLoadShape($event)">
 
   <ul class="nav nav-tabs">
-    <li><a href="#simple-shapes" data-toggle="tab">Simple</a></li>
-    <li><a href="#object" data-toggle="tab">Object</a></li>
-    <li class="active"><a href="#canvastab" data-toggle="tab">Canvas</a></li>
-    <li><a href="#load-svg-pane" data-toggle="tab">Load SVG</a></li>
-    <li><a href="#execute-code" data-toggle="tab">Execute</a></li>
-    <li><a href="#json-inout" data-toggle="tab">JSON</a></li>
+    <li><a data-target="#simple-shapes" data-toggle="tab">Simple</a></li>
+    <li><a data-target="#object" data-toggle="tab">Object</a></li>
+    <li class="active"><a data-target="#canvastab" data-toggle="tab">Canvas</a></li>
+    <li><a id="CSE" data-target="#fileForCanvas" data-toggle="tab">Google Custom Search</a></li>
+    <li><a data-target="#load-svg-pane" data-toggle="tab">Load SVG</a></li>
+    <li><a data-target="#execute-code" data-toggle="tab">Execute</a></li>
+    <li><a data-target="#json-inout" data-toggle="tab">JSON</a></li>
   </ul>
 
   <div class="tab-content">
+    <div class="tab-pane" id="fileForCanvas">
+
+<div id="searchPNG" class="gcse-search">
+  <form id="formCSE">
+    <input id="queryCSE" type="text" placeholder="Search for PNG">
+    <button id="submitCSE" class="btn btn-dark" type="button" name="button" value="submit"><i class="fa fa-search"></i></button>
+
+  </form>
+</div>
+  <div id="resultCSE">
+  </div>
+  <div id="pagerCSE">
+      <button id="previousPage" class="btn btn-dark" ng-click="previousPage()" type="button" name="button"><i class="fa fa-chevron-left"></i> Previous Page</button>
+      <button  id="nextPage" class="btn btn-dark" ng-click="nextPage()" type="button" name="button">Next Page <i class="fa fa-chevron-right"></i></button>
+  </div>
+
+    </div>
     <div class="tab-pane" id="object">
       <div class="object-controls" object-buttons-enabled="getSelected()">
         <label for="color">Fill / Stroke / Background:</label>
@@ -499,25 +530,6 @@
 
     <div class="tab-pane active" id="canvastab">
       <div id="global-controls">
-        <p id="complexity">
-          Canvas complexity (number of paths):
-          <strong>{[ canvas.complexity() ]}</strong>
-        </p>
-        <p>
-          Rasterize canvas to
-          <button class="btn btn-success" id="rasterize" ng-click="rasterize()">
-            Image
-          </button>
-          <button class="btn btn-success" id="rasterize" ng-click="rasterize3x()">
-            Image 3X multiplied
-          </button>
-          <button class="btn btn-success" id="rasterize-svg" ng-click="rasterizeSVG()">
-            SVG
-          </button>
-          <button class="btn btn-success" id="rasterize-json" ng-click="rasterizeJSON()">
-            JSON
-          </button>
-        </p>
         <p>
           <button class="btn btn-danger clear" ng-click="confirmClear()">Clear canvas</button>
           <button class="btn btn-object-action" id="remove-selected"
@@ -634,9 +646,7 @@
   var canvas = new fabric.Canvas('canvas');
 </script>
 
-<script src="../js/kitchensink/utils.js"></script>
-<script src="../js/kitchensink/app_config.js"></script>
-<script src="../js/kitchensink/controller.js"></script>
+
 
 <script>
 
@@ -654,7 +664,7 @@
         canvas.getWidth() * canvas.getZoom(),
         canvas.getHeight() * canvas.getZoom());
 
-      ctx.setLineDash([5, 5]);
+      ctx.setLineGame([5, 5]);
 
       ctx.strokeRect(
         canvas.viewportTransform[4],

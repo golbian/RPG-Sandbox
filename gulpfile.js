@@ -32,7 +32,7 @@ gulp.task('dist:js', ['clean:js'], function () {
       'node_modules/angular-sanitize/angular-sanitize.min.js',
       'node_modules/angular-draganddrop/angular-draganddrop.min.js',
       'node_modules/angular-route/angular-route.min.js',
-      'node_modules/noty/js/noty/packaged/jquery.noty.packaged.min.js',
+      'node_modules/noty/lib/noty.min.js',
       'node_modules/angular-uuid2/dist/angular-uuid2.min.js',
       'node_modules/angular-vs-repeat/src/angular-vs-repeat.min.js',
       'node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
@@ -55,8 +55,7 @@ gulp.task('dist:js', ['clean:js'], function () {
       'node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js',
       'node_modules/angular-gettext/dist/angular-gettext.min.js',
         'node_modules/d20/d20.js',
-        'node_modules/canvas/lib/canvas.js',
-        'node_modules/fabric/dist/fabric.min.js',
+        'node_modules/canvas/lib/canvas.js'
         /*
         'node_modules/canvas/lib/context2d.js',
         'node_modules/canvas/lib/bindings.js',

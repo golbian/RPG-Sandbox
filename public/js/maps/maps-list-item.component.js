@@ -35,6 +35,7 @@
                     },
                 },
             });
+            console.log(modal);
             modal.result.then(function () {
                 vm.onDelete();
             });

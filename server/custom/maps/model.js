@@ -4,19 +4,16 @@ var MapsSchema = new mongoose.Schema({
     companyID: { type: String },
     mapName: { type: String, required: true },
     mapDescription: { type: String },
-    mapSubType: { type: String },
-    properties: { type: Object },
+    properties: { type: String },
     owner: { type: String },
     createdBy: { type: String },
     author: { type: String },
     createdOn: { type: Date },
-    history: [],
     parentFolder: { type: String },
     isPublic: { type: Boolean },
     isShared: { type: Boolean },
     nd_trash_deleted: { type: Boolean },
     nd_trash_deleted_date: { type: Date },
-    selectedLayerID: mongoose.Schema.Types.ObjectId
 }, { collection: 'wst_Maps', collation: { locale: 'en', strength: 2 } });
 
 MapsSchema.methods.publish = async function () {
