@@ -29,6 +29,22 @@ $scope.mapName = function () {
     };
 
     $scope.mapNameSave = function () {
+
+      var saveJSON = $('#json-console')[0];
+
+      $scope.selectedMap.properties = saveJSON.value;
+
+      $scope.setConsoleJSON = function(value) {
+        consoleJSONValue = value;
+      };
+  $scope.saveJSON = function(withDefaults) {
+        canvas.includeDefaultValues = withDefaults;
+        _saveJSON(JSON.stringify(canvas.toJSON()));
+      };
+
+      var _saveJSON = function(json) {
+        $scope.setConsoleJSON(json);
+      };
         return mapModel.saveAsMap($scope.selectedMap, $scope.mode).then(function () {
             $('#theMapNameModal').modal('hide');
             $('.modal-backdrop').hide();
@@ -416,27 +432,6 @@ $scope.mapName = function () {
       canvas.add(textSample);
     };
 
-    var addShape = function(shapeName) {
-
-      console.log('adding shape', shapeName);
-
-      var coord = getRandomLeftTop();
-
-      fabric.loadSVGFromURL('../assets/' + shapeName + '.svg', function(objects, options) {
-
-        var loadedObject = fabric.util.groupSVGElements(objects, options);
-
-        loadedObject.set({
-          left: coord.left,
-          top: coord.top,
-          angle: getRandomInt(-10, 10)
-        })
-        .setCoords();
-
-        canvas.add(loadedObject);
-      });
-    };
-
     $scope.addPatternRect = function() {
       var coord = getRandomLeftTop();
       var rect = new fabric.Rect({
@@ -448,67 +443,6 @@ $scope.mapName = function () {
         fill: pattern,
       });
       canvas.add(rect);
-    };
-
-    $scope.maybeLoadShape = function(e) {
-      var $el = $(e.target).closest('button.shape');
-      if (!$el[0]) return;
-
-      var id = $el.prop('id'), match;
-      if (match = /\d+$/.exec(id)) {
-        addShape(match[0]);
-      }
-    };
-
-    function addImage(imageName, minScale, maxScale) {
-      var coord = getRandomLeftTop();
-
-      fabric.Image.fromURL('../assets/' + imageName, function(image) {
-
-        image.set({
-          left: coord.left,
-          top: coord.top,
-          angle: getRandomInt(-10, 10)
-        })
-        .scale(getRandomNum(minScale, maxScale))
-        .setCoords();
-
-        canvas.add(image);
-      });
-    };
-
-    $scope.addImage1 = function() {
-      addImage('pug.jpg', 0.1, 0.25);
-    };
-
-    $scope.addImage2 = function() {
-      addImage('logo.png', 0.1, 1);
-    };
-
-    $scope.addImage3 = function() {
-      addImage('printio.png', 0.5, 0.75);
-    };
-
-    $scope.addImage4 = function() {
-      var src = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-      var video1El = document.createElement('video');
-      video1El.crossOrigin = 'anonymous';
-      video1El.src = src;
-      video1El.addEventListener('loadeddata', function() {
-          // Video is loaded and can be played
-         var coord = getRandomLeftTop();
-         var video = new fabric.Image(video1El, {
-           left: coord.left,
-           top: coord.top,
-           angle: getRandomInt(-10, 10)
-         });
-         canvas.add(video);
-      }, false);
-      video1El.width = 384;
-      video1El.height = 206;
-      //video1El.style.display = 'none';
-      document.body.appendChild(video1El);
-      video1El.load();
     };
 
     $scope.confirmClear = function() {
@@ -529,10 +463,6 @@ $scope.mapName = function () {
         var data = canvas.toDataURL({ multiplier: multiplier, format: 'png' });
         document.getElementById('canvasRasterizer').src = data;
       }
-    };
-
-    $scope.rasterizeSVG = function() {
-      document.getElementById('SVGRasterizer').innerHTML = canvas.toSVG();
     };
 
     $scope.rasterizeJSON = function() {
@@ -770,14 +700,6 @@ $scope.mapName = function () {
       }
     };
 
-    var consoleSVGValue = (
-      '<?xml version="1.0" standalone="no"?>' +
-        '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' +
-      '<svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
-        '<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)"/>' +
-      '</svg>'
-    );
-
     var consoleValue = (
       '// clear canvas\n' +
       'canvas.clear();\n\n' +
@@ -813,41 +735,11 @@ $scope.mapName = function () {
     $scope.setConsoleJSON = function(value) {
       consoleJSONValue = value;
     };
-    $scope.getConsoleSVG = function() {
-      return consoleSVGValue;
-    };
-    $scope.setConsoleSVG = function(value) {
-      consoleSVGValue = value;
-    };
     $scope.getConsole = function() {
       return consoleValue;
     };
     $scope.setConsole = function(value) {
       consoleValue = value;
-    };
-
-    $scope.loadSVGWithoutGrouping = function() {
-      _loadSVGWithoutGrouping(consoleSVGValue);
-    };
-    $scope.loadSVG = function() {
-      _loadSVG(consoleSVGValue);
-    };
-
-    var _loadSVG = function(svg) {
-      fabric.loadSVGFromString(svg, function(objects, options) {
-        var obj = fabric.util.groupSVGElements(objects, options);
-        canvas.add(obj).centerObject(obj).renderAll();
-        obj.setCoords();
-      });
-    };
-
-    var _loadSVGWithoutGrouping = function(svg) {
-      fabric.loadSVGFromString(svg, function(objects) {
-        canvas.renderOnAddRemove = false;
-        canvas.add.apply(canvas, objects);
-        canvas.renderOnAddRemove = true;
-        canvas.renderAll();
-      });
     };
 
     $scope.saveJSON = function(withDefaults) {
@@ -1218,17 +1110,14 @@ dragIn = function(e) {
 
   var googleKey =  'AIzaSyDDj8FP9qZBQPEf6lxsjO-ozuk6WhbrEvM';
 
-   $('#CSE').click(function(e) {
      $('#formCSE').submit(function(e) {
        $('#resultCSE').empty();
        var query =  $('#queryCSE').val();
        $.get('https://www.googleapis.com/customsearch/v1/siterestrict?key='+ googleKey +'&cx=008426595733103543205%3A__a1wiukcxm&q='+ query +'&fileType=png&searchType=image', function(data) {
          for (result of data.items) {
-
            $('#resultCSE').append('<ul class="list-group">'+
   '<li class="list-group-item">'+'<img height="100px" width="100px" src="'+ result.link +'">'+ result.title + '<\/li>'+
 '<\/ul>')
-
          }
          if(!data.queries.previousPage) {
            $("#previousPage").addClass('hide')
@@ -1281,6 +1170,59 @@ dragIn = function(e) {
            }
          });
        };
-     });
+
+        canvas.on('mouse:down', function(opt) {
+  var evt = opt.e;
+  if (evt.ctrlKey === true) {
+    this.isDragging = true;
+    this.selection = false;
+    this.lastPosX = evt.clientX;
+    this.lastPosY = evt.clientY;
+  }
+});
+canvas.on('mouse:move', function(opt) {
+  if (this.isDragging) {
+    var e = opt.e;
+    this.viewportTransform[4] += e.clientX - this.lastPosX;
+    this.viewportTransform[5] += e.clientY - this.lastPosY;
+    this.requestRenderAll();
+    this.lastPosX = e.clientX;
+    this.lastPosY = e.clientY;
+  }
+});
+canvas.on('mouse:up', function(opt) {
+  this.isDragging = false;
+  this.selection = true;
+});
+
+
+
+canvas.on('mouse:wheel', function(opt) {
+var delta = opt.e.deltaY;
+var pointer = canvas.getPointer(opt.e);
+var zoom = canvas.getZoom();
+zoom = zoom + delta/200;
+if (zoom > 20) zoom = 20;
+if (zoom < 0.01) zoom = 0.01;
+canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+opt.e.preventDefault();
+opt.e.stopPropagation();
+var vpt = this.viewportTransform;
+if (zoom < 400 / 1000) {
+  this.viewportTransform[4] = 200 - 1000 * zoom / 2;
+  this.viewportTransform[5] = 200 - 1000 * zoom / 2;
+} else {
+  if (vpt[4] >= 0) {
+    this.viewportTransform[4] = 0;
+  } else if (vpt[4] < canvas.getWidth() - 1000 * zoom) {
+    this.viewportTransform[4] = canvas.getWidth() - 1000 * zoom;
+  }
+  if (vpt[5] >= 0) {
+    this.viewportTransform[5] = 0;
+  } else if (vpt[5] < canvas.getHeight() - 1000 * zoom) {
+    this.viewportTransform[5] = canvas.getHeight() - 1000 * zoom;
+  }
+}
+});
   });
 });

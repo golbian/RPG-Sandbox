@@ -8,6 +8,7 @@
         'ngFileSaver',
         'ui.sortable',
         'ui.bootstrap',
+        'angularUUID2',
         'ui.select',
         'ui.bootstrap.datetimepicker',
         'ui.tree',
@@ -78,12 +79,6 @@
         $routeProvider.when('/shared-space', {
             templateUrl: 'partials/spaces/index.html',
             controller: 'spacesCtrl'
-        });
-
-        // explore
-        $routeProvider.when('/explore', {
-            templateUrl: 'partials/map/edit.html',
-            controller: 'mapCtrl'
         });
 
         // imports and exports

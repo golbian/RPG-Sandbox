@@ -70,7 +70,6 @@ exports.MapsCreate = function (req, res) {
         req.body.owner = req.user._id;
         req.body.isPublic = false;
         req.body.isShared = false;
-
         req.body.author = req.user.userName;
 
         controller.create(req).then(function (result) {
@@ -82,6 +81,7 @@ exports.MapsCreate = function (req, res) {
 exports.MapsUpdate = function (req, res) {
     req.query.trash = true;
     req.query.companyid = true;
+    req.query.properties = true;
     var data = req.body;
 
     if (!req.session.isWSTADMIN) {

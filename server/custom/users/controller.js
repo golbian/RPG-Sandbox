@@ -138,7 +138,6 @@ exports.getCounts = function (req, res) {
     var isWSTADMIN = false;
 
     if (req.isAuthenticated()) {
-      console.log(req.user);
         for (var i in req.user.roles) {
             if (req.user.roles[i] === 'WSTADMIN') {
                 isWSTADMIN = true;
@@ -366,7 +365,7 @@ exports.getUserObjects = async function (req, res) {
     };
     const company = await Companies.findOne(query).exec();
 
-    const folders = company.publicSpace;
+    const folders = company.sharedSpace;
 
     let canPublish = false;
     if (req.session.isWSTADMIN) {
@@ -452,6 +451,7 @@ async function setGrantsToFolder_v2 (folders, grant) {
 }
 
 async function getFolderStructureForWSTADMIN (folders, index) {
+  console.log(folders);
     const folder = folders[index];
 
     if (folder) {

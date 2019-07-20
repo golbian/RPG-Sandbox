@@ -129,6 +129,11 @@ a:focus {
   display: none;
 }
 
+.hidden {
+  display: none!important;
+  visibility: collapse!important;
+}
+
 .modal.fade {
   opacity: 1;
 }

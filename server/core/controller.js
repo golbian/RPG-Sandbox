@@ -16,7 +16,6 @@ class Controller {
 
         const p = Model.find(find, fields, params).exec().then(function (items) {
             return Model.count(find).exec().then(function (count) {
-              console.log(items);
                 return { result: 1, page: page, pages: ((req.query.page) ? Math.ceil(count / perPage) : 1), items: items };
             });
         }).catch(function (err) {

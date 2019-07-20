@@ -25,17 +25,17 @@ angular.module('app').service('mapModel', function ($q, connection, FileSaver) {
         // Cleaning up the map object
         // var clonedMap = clone(map);
         var clonedMap = map;
-        if (clonedMap.properties) {
-            clonedMap.properties = undefined;
-        }
+
         clonedMap.parentDiv = undefined;
 
         let url;
         if (mode === 'add') {
             url = '/api/maps/create';
-        } else {
+        } if (mode === 'edit') {
             url = '/api/maps/update/' + map._id;
         }
+
+        console.log(clonedMap);
 
         return connection.post(url, clonedMap);
     };

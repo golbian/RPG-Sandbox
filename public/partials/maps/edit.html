@@ -1,10 +1,19 @@
+<script src="js/xlsx.core.min.js"></script>
+
 <div id="bd-wrapper">
+
+  <div class="page-header">
+      <span class="h3" ng-bind="vm.map.mapName"></span>
+      <a ng-if="vm.map && ((vm.map.owner == user._id) || isWSTADMIN)" ng-href="/#/maps/edit/{{vm.map._id}}"  class="btn btn-success pull-right" style="margin-right: 5px;" translate>Edit Report</a>
+      <a ng-click="goBack()" class="btn btn-default pull-right" translate>Cancel</a>
+  </div>
 
 <link href='http://fonts.googleapis.com/css?family=Plaster' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Engagement' rel='stylesheet' type='text/css'>
 
         <div class="explorer-header-title">
-                <h3   editable-text="selectedMap.mapName" blur="submit">{{ selectedMap.mapName }}</h3>
+                <h3>{{ selectedMap.mapName }}</h3>
+
         </div>
 
     <div class="explorer-header-buttons">
@@ -414,10 +423,6 @@
           ng-class="{'btn-inverse': getFreeDrawingMode()}">
           {[ getFreeDrawingMode() ? 'Exit free drawing mode' : 'Enter free drawing mode' ]}
         </button>
-        <hr>
-        <span>Set canvas Width: <input type="text" ng-model="canvasWidth"></span>
-        <hr>
-        <span>Set canvas Height: <input type="text" ng-model="canvasHeight"></span>
 
         <div id="drawing-mode-options" ng-show="getFreeDrawingMode()">
           <label for="drawing-mode-selector">Mode:</label>
@@ -468,6 +473,12 @@
 
   </div>
 
+</div>
+<div style="min-width: 800px; width: 800px;" >
+  rasterized canvas:<br />
+  <img id="canvasRasterizer" /><br />
+  svg canvas:<br />
+  <div id="SVGRasterizer" style="display: inline-block" />
 </div>
 <!-- <script src="../../lib/centering_guidelines.js"></script>
 <script src="../../lib/aligning_guidelines.js"></script> -->

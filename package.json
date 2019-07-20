@@ -60,6 +60,7 @@
     "passport-remember-me": "0.0.1",
     "password-generator": "^2.2.0",
     "pg": "^7.11.0",
+    "popper.js": "^1.15.0",
     "socket.io": "^2.2.0",
     "ui-select": "^0.19.8",
     "xlsx": "^0.14.3"

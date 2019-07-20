@@ -92,6 +92,7 @@ gulp.task('dist:js', ['clean:js'], function () {
 
     const copy = gulp.src([
         'node_modules/js-xlsx/dist/xlsx.core.min.js',
+        'node_modules/popper.js/dist/popper.min.js',
     ])
         .pipe(decomment())
         .pipe(gulp.dest('dist/js'));
