@@ -1,16 +1,21 @@
-(function () {
-    'use strict';
+    angular.module('app').controller('MapsViewController', MapsViewController);
 
-    angular.module('app').controller('MapsViewController', function ($scope, connection, $compile, mapModel, $routeParams, $timeout, map) {
+    MapsViewController.$inject = ['$scope', 'connection', '$compile', 'mapModel', '$routeParams', '$uibModal', '$timeout', 'map'];
+
+    function MapsViewController ($scope, connection, $compile, mapModel, $routeParams, $uibModal, $timeout, map) {
         const vm = this;
         vm.map = map;
         $scope.mapNameModal = 'partials/map/modals/mapNameModal.html';
         $scope.gameListModal = 'partials/map/modals/gameListModal.html';
-        $scope.selectedMap = {};
         $scope.mode = 'edit';
         $scope.duplicateOptions = {};
         $scope.duplicateOptions.freeze = false;
         $scope.duplicateOptions.header = 'Duplicate map';
+        $scope.mapObject = true;
+        $scope.tokenObject = false;
+        $scope.mapLock = false;
+        $scope.tokenLock = false;
+
 
         $scope.initMapList = function () {
             $scope.navigation.page = 1;
@@ -43,26 +48,14 @@
 
         $scope.mapNameSave = function () {
 
-          var saveJSON = $('#json-console')[0];
+          var saveJSON = JSON.stringify(canvas.toJSON());
 
-          $scope.selectedMap.properties = saveJSON.value;
-          $scope.selectedMap._id = vm.map._id;
+          vm.map.properties = saveJSON;
 
-          $scope.setConsoleJSON = function(value) {
-            consoleJSONValue = value;
-          };
-      $scope.saveJSON = function(withDefaults) {
-            canvas.includeDefaultValues = withDefaults;
-            _saveJSON(JSON.stringify(canvas.toJSON()));
-          };
-
-          var _saveJSON = function(json) {
-            $scope.setConsoleJSON(json);
-          };
-            return mapModel.saveAsMap($scope.selectedMap, $scope.mode).then(function () {
+            return mapModel.saveAsMap(vm.map, $scope.mode).then(function () {
                 $('#theMapNameModal').modal('hide');
                 $('.modal-backdrop').hide();
-                //$scope.goBack();
+                $scope.goBack();
             });
     };
 
@@ -1109,9 +1102,27 @@
           console.log(img);
           var rex = /src="?([^"\s]+)"?\s*/;
           var url = rex.exec(img);
-          fabric.Image.fromURL(url[1], function(oImg) {
-            canvas.add(oImg);
+          new fabric.Image.fromURL(url[1],  function(oImg) {
+              canvas.add(oImg);
           });
+
+          if ($scope.mapObject === true) {
+            var group = 'mapGroup';
+          }
+
+          if ($scope.mapObject === false) {
+
+            let newToken = { attributes: {},
+                health: '',
+                mana: '',
+                stamina: ''
+            };
+
+            connection.post('/api/token/create', newToken).then( function (result) {
+                $scope.$broadcast('newToken', { id: result.item._id });
+            });
+
+          }
 
           console.log("Drop started");
           $('#canvas').removeClass('highlight');;
@@ -1122,9 +1133,196 @@
       $main.on('dragover dragenter', dragIn);
       $main.on('dragexit dragleave', dragOut);
 
+      $scope.$on('newToken', function(event, args) {
+        var tokens = canvas.getObjects();
+        for (token of tokens) {
+          if (!token.group) {
+        token.toObject = (function(toObject) {
+          return function() {
+            return fabric.util.object.extend(toObject.call(this), {
+              tokenID: this.tokenID,
+            });
+          };
+        })(token.toObject);
+
+        token.tokenID = args.id;
+
+        }
+      }
+
+      });
+
+      fabric.Canvas.prototype.getAbsoluteCoords = function(object) {
+        return {
+          left: object.left + this._offset.left,
+          top: object.top + this._offset.top
+        };
+      }
+
+      canvas.on('selection:created', function() {
+
+        var activeObject = canvas.getActiveObject();
+
+        if (activeObject.tokenID) {
+          $('#bd-wrapper').append('<div id="overlayToken" style="position:absolute">'+
+          '<div class="button">'+
+            '<div class="health">'+
+            '  <span></span>'+
+            '</div>'+
+          '</div>'+
+          '<div class="button">'+
+            '<div class="mana">'+
+              '<span></span>'+
+            '</div>'+
+          '</div>'+
+          '<div class="button">'+
+            '<div class="stamina">'+
+              '<span></span>'+
+            '</div>'+
+          '</div>'+
+          '<div class="tokenEdit">'+
+            '<i class="fa fa-cogs"></i>'+
+          '</div>'+
+        '</div>')
+
+      var id = activeObject.tokenID;
+
+      connection.get('/api/token/find-one', id).then(function (result) {
+        console.log(result);
+      })
+
+      var overlayToken = $('#overlayToken'),
+      overlayTokenWidth = 100,
+      overlayTokenHeight = 100;
+
+      console.log(overlayToken);
+
+
+      function positionOverlay(activeObject) {
+      var absCoords = canvas.getAbsoluteCoords(activeObject);
+
+      overlayToken[0].style.left = (absCoords.left - overlayTokenWidth / 2) + 'px';
+      overlayToken[0].style.top = (absCoords.top - overlayTokenHeight / 2) + 'px';
+      }
+
+      activeObject.on('moving', function() { positionOverlay(activeObject) });
+      activeObject.on('scaling', function() { positionOverlay(activeObject) });
+      positionOverlay(activeObject);
+    }
+
+  });
+
+  canvas.on('selection:updated', function() {
+
+    var activeObject = canvas.getActiveObject();
+
+    $('#overlayToken').remove();
+
+    if (activeObject.tokenID) {
+
+      $('#bd-wrapper').append('<div id="overlayToken" style="position:absolute">'+
+         '<div class="button">'+
+           '<div class="health">'+
+            '  <span></span>'+
+           '</div>'+
+         '</div>'+
+         '<div class="button">'+
+           '<div class="mana">'+
+              '<span></span>'+
+           '</div>'+
+         '</div>'+
+         '<div class="button">'+
+           '<div class="stamina">'+
+              '<span></span>'+
+           '</div>'+
+         '</div>'+
+         '<div class="tokenEdit">'+
+            '<i class="fa fa-cogs"></i>'+
+         '</div>'+
+      '</div>')
+
+      var overlayToken = $('#overlayToken'),
+      overlayTokenWidth = 5,
+      overlayTokenHeight = 5;
+
+      console.log(overlayToken);
+
+
+      function positionOverlay(activeObject) {
+      var absCoords = canvas.getAbsoluteCoords(activeObject);
+
+      overlayToken[0].style.left = (absCoords.left - overlayTokenWidth) + 'px';
+      overlayToken[0].style.top = (absCoords.top - overlayTokenHeight) + 'px';
+      }
+
+      activeObject.on('moving', function() { positionOverlay(activeObject) });
+      activeObject.on('scaling', function() { positionOverlay(activeObject) });
+      positionOverlay(activeObject);
+
+    }
+
+  });
+
+  canvas.on('selection:cleared', function() {
+
+    $('#overlayToken').remove();
+
+  })
+
+
+
+    // const modal = $uibModal.open({
+    //       component: 'appOverlayToken',
+    // });
+
+
+    $scope.mapLockOff = function() {
+        $scope.mapLock = false;
+        var canvasObjects = canvas.getObjects();
+        for (object of canvasObjects) {
+          if (!object.tokenID) {
+              object.set('selectable', true);
+              object.set('hoverCursor', 'move');
+          }
+        }
+      }
+
+      $scope.mapLockOn = function() {
+        $scope.mapLock = true;
+        var canvasObjects = canvas.getObjects();
+        for (object of canvasObjects) {
+          if (!object.tokenID) {
+              object.set('selectable', false);
+              object.set('hoverCursor', 'default');
+          }
+        }
+      }
+
+    $scope.tokenLockOff = function() {
+        $scope.tokenLock = false;
+        var canvasObjects = canvas.getObjects();
+        for (object of canvasObjects) {
+          if (object.tokenID) {
+            object.set('selectable', true);
+            object.set('hoverCursor', 'move');
+            console.log(object);
+          }
+        }
+      }
+
+        $scope.tokenLockOn = function() {
+        $scope.tokenLock = true;
+        var canvasObjects = canvas.getObjects();
+        for (object of canvasObjects) {
+          if (object.tokenID) {
+            object.set('selectable', false);
+            object.set('hoverCursor', 'default');
+          }
+        }
+      }
+
       var googleKey =  'AIzaSyDDj8FP9qZBQPEf6lxsjO-ozuk6WhbrEvM';
 
-       $('#CSE').click(function(e) {
          $('#formCSE').submit(function(e) {
            $('#resultCSE').empty();
            var query =  $('#queryCSE').val();
@@ -1187,44 +1385,43 @@
                }
              });
            };
-
-            canvas.on('mouse:down', function(opt) {
-      var evt = opt.e;
-      if (evt.ctrlKey === true) {
-        this.isDragging = true;
-        this.selection = false;
-        this.lastPosX = evt.clientX;
-        this.lastPosY = evt.clientY;
-      }
-    });
-    canvas.on('mouse:move', function(opt) {
-      if (this.isDragging) {
-        var e = opt.e;
-        this.viewportTransform[4] += e.clientX - this.lastPosX;
-        this.viewportTransform[5] += e.clientY - this.lastPosY;
-        this.requestRenderAll();
-        this.lastPosX = e.clientX;
-        this.lastPosY = e.clientY;
-      }
-    });
-    canvas.on('mouse:up', function(opt) {
-      this.isDragging = false;
-      this.selection = true;
-    });
-
-    canvas.on('mouse:wheel', function(opt) {
-      var delta = opt.e.deltaY;
-      var pointer = canvas.getPointer(opt.e);
-      var zoom = canvas.getZoom();
-      zoom = zoom + delta/200;
-      if (zoom > 20) zoom = 20;
-      if (zoom < 0.01) zoom = 0.01;
-      canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-      opt.e.preventDefault();
-      opt.e.stopPropagation();
-    });
          });
-      });
-    });
 
-})();
+         canvas.on('mouse:down', function(opt) {
+           var evt = opt.e;
+           if (evt.ctrlKey === true) {
+              this.isDragging = true;
+              this.selection = false;
+              this.lastPosX = evt.clientX;
+              this.lastPosY = evt.clientY;
+          }
+        });
+
+        canvas.on('mouse:up', function(opt) {
+          this.isDragging = false;
+          this.selection = true;
+        })
+
+        canvas.on('mouse:move', function(opt) {
+          if (this.isDragging) {
+            var e = opt.e;
+            this.viewportTransform[4] += e.clientX - this.lastPosX;
+            this.viewportTransform[5] += e.clientY - this.lastPosY;
+            this.requestRenderAll();
+            this.lastPosX = e.clientX;
+            this.lastPosY = e.clientY;
+          }
+        });
+
+        canvas.on('mouse:wheel', function(opt) {
+          var delta = opt.e.deltaY;
+          var pointer = canvas.getPointer(opt.e);
+          var zoom = canvas.getZoom();
+          zoom = zoom + -delta/200;
+          if (zoom > 20) zoom = 20;
+          if (zoom < 0.01) zoom = 0.01;
+          canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+          opt.e.preventDefault();
+          opt.e.stopPropagation();
+    });
+  };

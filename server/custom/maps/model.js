@@ -18,13 +18,11 @@ var MapsSchema = new mongoose.Schema({
 
 MapsSchema.methods.publish = async function () {
     this.isPublic = true;
-
     return this.save();
 };
 
 MapsSchema.methods.unpublish = async function () {
     this.isPublic = false;
-
     return this.save();
 };
 

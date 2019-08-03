@@ -41,6 +41,10 @@
             return connection.get('/api/get-user-objects').then(res => res.items);
         }
 
+        function getTokenData () {
+            return connection.get('/api/get-token-data').then(res => res.items);
+        }
+
         function mapsFindAll (params) {
             return connection.get('/api/maps/find-all', params);
         }

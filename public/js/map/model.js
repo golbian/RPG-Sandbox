@@ -26,8 +26,6 @@ angular.module('app').service('mapModel', function ($q, connection, FileSaver) {
         // var clonedMap = clone(map);
         var clonedMap = map;
 
-        clonedMap.parentDiv = undefined;
-
         let url;
         if (mode === 'add') {
             url = '/api/maps/create';
@@ -44,7 +42,6 @@ angular.module('app').service('mapModel', function ($q, connection, FileSaver) {
         const params = { id: duplicateOptions.map._id };
         return connection.get('/api/maps/find-one', params).then(function (result) {
             const newMap = result.item;
-            console.log(newMap)
 
             delete newMap._id;
             delete newMap.createdOn;

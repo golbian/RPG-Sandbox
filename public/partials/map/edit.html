@@ -2,6 +2,8 @@
 
 <link href='http://fonts.googleapis.com/css?family=Plaster' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Engagement' rel='stylesheet' type='text/css'>
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
         <div class="explorer-header-title">
                 <h3   editable-text="selectedMap.mapName" blur="submit">{{ selectedMap.mapName }}</h3>
@@ -26,8 +28,6 @@
     <li><a data-target="#object" data-toggle="tab">Object</a></li>
     <li class="active"><a data-target="#canvastab" data-toggle="tab">Canvas</a></li>
     <li><a id="CSE" data-target="#fileForCanvas" data-toggle="tab">Google Custom Search</a></li>
-    <li><a data-target="#execute-code" data-toggle="tab">Execute</a></li>
-    <li><a data-target="#json-inout" data-toggle="tab">JSON</a></li>
   </ul>
 
   <div class="tab-content">
@@ -376,6 +376,12 @@
 
     <div class="tab-pane active" id="canvastab">
       <div id="global-controls">
+        <label> Select Map/Token : <input id="mapCheck" data-on='<i class="fa fa-map"></i>' data-off='<i class="fa fa-cube"></i>' checked data-toggle="toggle" type="checkbox" ng-model="mapObject"></label>
+        <button class ="btn btn-dark lockButton" type="button" ng-if="mapLock === false && mapObject === true" ng-click="mapLockOn()" ng-model="mapLock" name="button"><i class="fa fa-unlock-alt"></i></button>
+        <button class ="btn btn-dark lockButton" type="button" ng-click="mapLockOff()" ng-if="mapLock === true && mapObject === true" ng-model="mapLock" name="button"><i class="fa fa-lock"></i></button>
+        <button class ="btn btn-dark lockButton" type="button" ng-if="tokenLock === false && mapObject === false" ng-click="tokenLockOn()" ng-model="tokenLock" name="button"><i class="fa fa-unlock-alt"></i></button>
+        <button class ="btn btn-dark lockButton" type="button" ng-click="tokenLockOff()" ng-if="tokenLock === true && mapObject === false" ng-model="tokenLock" name="button"><i class="fa fa-lock"></i></button>
+        <br>
         <p>
           <button class="btn btn-danger clear" ng-click="confirmClear()">Clear canvas</button>
           <button class="btn btn-object-action" id="remove-selected"
@@ -414,10 +420,6 @@
           ng-class="{'btn-inverse': getFreeDrawingMode()}">
           {[ getFreeDrawingMode() ? 'Exit free drawing mode' : 'Enter free drawing mode' ]}
         </button>
-        <hr>
-        <span>Set canvas Width: <input type="text" ng-model="canvasWidth"></span>
-        <hr>
-        <span>Set canvas Height: <input type="text" ng-model="canvasHeight"></span>
 
         <div id="drawing-mode-options" ng-show="getFreeDrawingMode()">
           <label for="drawing-mode-selector">Mode:</label>
@@ -445,27 +447,6 @@
         </div>
       </div>
     </div>
-
-    <div class="tab-pane" id="execute-code">
-        <textarea id="canvas-console" bind-value-to="console">
-        </textarea>
-        <button type="button" class="btn btn-info" ng-click="execute()">Execute</button>
-    </div>
-
-    <div class="tab-pane" id="json-inout">
-      <textarea id="json-console" bind-value-to="consoleJSON">
-      </textarea>
-      <button type="button" class="btn btn-info" ng-click="loadJSON()">
-        Load
-      </button>
-      <button type="button" class="btn btn-info" ng-click="saveJSON(true)">
-        Save
-      </button>
-      <button type="button" class="btn btn-info" ng-click="saveJSON(false)">
-        Save with no defaults
-      </button>
-    </div>
-
   </div>
 
 </div>
@@ -573,6 +554,10 @@
   })();
 
 </script>
+
+    </div>
+
+    <appOverlayToken><appOverlayToken/>
 
     </div>
 

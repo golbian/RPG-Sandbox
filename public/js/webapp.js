@@ -93,4 +93,45 @@
             controller: 'ioCtrl'
         });
     }
+
+    angular.module('app').run(runBlock);
+
+runBlock.$inject = ['$rootScope', '$location', 'editableOptions', 'connection', 'userService', 'language'];
+
+function runBlock ($rootScope, $location, editableOptions, connection, userService, language) {
+    userService.getCurrentUser().then(user => {
+        $rootScope.user = user;
+    });
+
+    // Redirect to /login if next route is not public and user is not authenticated
+    $rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
+        if (next.$$route && !next.$$route.redirectTo && !next.$$route.isPublic) {
+            userService.getCurrentUser().then(user => {
+                if (!user) {
+                    window.location.href = '/login';
+                }
+            }, () => {
+                window.location.href = '/login';
+            });
+        }
+    });
+
+    $rootScope.$on('$routeChangeError', function (angularEvent, current, previous) {
+        $location.url('/');
+    });
+
+    $rootScope.goBack = function () {
+        window.history.back();
+    };
+
+    $rootScope.userContextHelp = [];
+    userService.getCurrentUser().then(user => {
+        $rootScope.userContextHelp = user.contextHelp;
+    });
+
+    // Set default options for xeditable
+    editableOptions.buttons = 'no';
+
+    language.setLanguageFromLocalStorage();
+}
 })();

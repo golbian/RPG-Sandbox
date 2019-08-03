@@ -340,11 +340,11 @@ exports.getUserData = function (req, res) {
                 theUserData.publishGames = publishGames;
                 theUserData.publishMaps = publishMaps;
 
-                res.status(200).json({result: 1, page: 1, pages: 1, items: {user: theUserData, companyData: company, rolesData: roles, gamesCreate: createGames, mapsCreate: createMaps, exploreData: exploreData, viewSQL: viewSQL}});
+                res.status(200).json({result: 1, page: 1, pages: 1, items: {user: theUserData, companyData: company, rolesData: roles, gamesCreate: createGames, mapsCreate: createMaps, exploreData: exploreData}});
             });
         } else {
             // var user = (req.user) ? req.user : false;
-            res.status(200).json({result: 1, page: 1, pages: 1, items: {user: theUserData, companyData: company, rolesData: [], gamesCreate: createGames, mapsCreate: createMaps, exploreData: exploreData, viewSQL: viewSQL, isWSTADMIN: isWSTADMIN}});
+            res.status(200).json({result: 1, page: 1, pages: 1, items: {user: theUserData, companyData: company, rolesData: [], gamesCreate: createGames, mapsCreate: createMaps, exploreData: exploreData, isWSTADMIN: isWSTADMIN}});
         }
     });
 };

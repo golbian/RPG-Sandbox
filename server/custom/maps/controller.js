@@ -83,6 +83,7 @@ exports.MapsUpdate = function (req, res) {
     req.query.companyid = true;
     req.query.properties = true;
     var data = req.body;
+    console.log(data);
 
     if (!req.session.isWSTADMIN) {
         var Maps = connection.model('Maps');
@@ -192,7 +193,6 @@ exports.MapsGetData = async function (req, res) {
 function getMapFromRequest (req) {
     const conditions = {
         _id: req.body._id || req.body.id,
-        companyID: req.user.companyID,
     };
 
     if (!req.session.isWSTADMIN) {

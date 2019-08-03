@@ -1,4 +1,4 @@
-angular.module('app').controller('mapCtrl', function ($scope, connection, $compile, $routeParams, $timeout, mapModel) {
+angular.module('app').controller('mapCtrl', function ($scope, $uibModal, connection, $compile, $routeParams, $timeout, mapModel) {
     $scope.mapNameModal = 'partials/map/modals/mapNameModal.html';
     $scope.gameListModal = 'partials/map/modals/gameListModal.html';
 
@@ -8,6 +8,10 @@ angular.module('app').controller('mapCtrl', function ($scope, connection, $compi
     $scope.duplicateOptions = {};
     $scope.duplicateOptions.freeze = false;
     $scope.duplicateOptions.header = 'Duplicate map';
+    $scope.mapObject = true;
+    $scope.tokenObject = false;
+    $scope.mapLock = false;
+    $scope.tokenLock = false;
 
     $scope.initMapList = function () {
         $scope.navigation.page = 1;
@@ -16,10 +20,6 @@ angular.module('app').controller('mapCtrl', function ($scope, connection, $compi
             $scope.mode = 'list';
         });
     };
-
-
-
-    //console.log(jsonSaveString);
 
 $scope.mapName = function () {
         if ($scope.mode === 'add') {
@@ -30,25 +30,14 @@ $scope.mapName = function () {
 
     $scope.mapNameSave = function () {
 
-      var saveJSON = $('#json-console')[0];
+      var saveJSON = JSON.stringify(canvas.toJSON());
 
-      $scope.selectedMap.properties = saveJSON.value;
+      $scope.selectedMap.properties = saveJSON;
 
-      $scope.setConsoleJSON = function(value) {
-        consoleJSONValue = value;
-      };
-  $scope.saveJSON = function(withDefaults) {
-        canvas.includeDefaultValues = withDefaults;
-        _saveJSON(JSON.stringify(canvas.toJSON()));
-      };
-
-      var _saveJSON = function(json) {
-        $scope.setConsoleJSON(json);
-      };
         return mapModel.saveAsMap($scope.selectedMap, $scope.mode).then(function () {
             $('#theMapNameModal').modal('hide');
             $('.modal-backdrop').hide();
-            //$scope.goBack();
+            $scope.goBack();
         });
 };
 
@@ -473,6 +462,17 @@ $scope.mapName = function () {
       return canvas.getActiveObject();
     };
 
+    canvas.on('mouse:down', function(opt) {
+var evt = opt.e;
+if (evt.deleteKey === true) {
+  var activeObjects = canvas.getActiveObjects();
+  canvas.discardActiveObject()
+  if (activeObjects.length) {
+    canvas.remove.apply(canvas, activeObjects);
+  }
+}
+});
+
     $scope.removeSelected = function() {
       var activeObjects = canvas.getActiveObjects();
       canvas.discardActiveObject()
@@ -761,97 +761,6 @@ $scope.mapName = function () {
       });
     };
 
-    function initCustomization() {
-      if (typeof Cufon !== 'undefined' && Cufon.fonts.delicious) {
-        Cufon.fonts.delicious.offsetLeft = 75;
-        Cufon.fonts.delicious.offsetTop = 25;
-      }
-
-      if (/(iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
-        fabric.Object.prototype.cornerSize = 30;
-      }
-
-      fabric.Object.prototype.transparentCorners = false;
-
-      if (document.location.search.indexOf('guidelines') > -1) {
-        initCenteringGuidelines(canvas);
-        initAligningGuidelines(canvas);
-      }
-    }
-
-    initCustomization();
-
-    function addTexts() {
-      var iText = new fabric.IText('lorem ipsum\ndolor\nsit Amet\nconsectetur', {
-        left: 100,
-        top: 150,
-        fontFamily: 'Helvetica',
-        fill: '#333',
-        styles: {
-          0: {
-            0: { fill: 'red', fontSize: 20 },
-            1: { fill: 'red', fontSize: 30 },
-            2: { fill: 'red', fontSize: 40 },
-            3: { fill: 'red', fontSize: 50 },
-            4: { fill: 'red', fontSize: 60 },
-
-            6: { textBackgroundColor: 'yellow' },
-            7: { textBackgroundColor: 'yellow' },
-            8: { textBackgroundColor: 'yellow' },
-            9: { textBackgroundColor: 'yellow' }
-          },
-          1: {
-            0: { textDecoration: 'underline' },
-            1: { textDecoration: 'underline' },
-            2: { fill: 'green', fontStyle: 'italic', textDecoration: 'underline' },
-            3: { fill: 'green', fontStyle: 'italic', textDecoration: 'underline' },
-            4: { fill: 'green', fontStyle: 'italic', textDecoration: 'underline' }
-          },
-          2: {
-            0: { fill: 'blue', fontWeight: 'bold' },
-            1: { fill: 'blue', fontWeight: 'bold' },
-            2: { fill: 'blue', fontWeight: 'bold' },
-
-            4: { fontFamily: 'Courier', textDecoration: 'line-through' },
-            5: { fontFamily: 'Courier', textDecoration: 'line-through' },
-            6: { fontFamily: 'Courier', textDecoration: 'line-through' },
-            7: { fontFamily: 'Courier', textDecoration: 'line-through' }
-          },
-          3: {
-            0: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' },
-            1: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' },
-            2: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' },
-            3: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' },
-            4: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' }
-          }
-        }
-      });
-
-      var iText2 = new fabric.IText('foo bar\nbaz\nquux', {
-        left: 400,
-        top: 150,
-        fontFamily: 'Helvetica',
-        fill: '#333',
-        styles: {
-          0: {
-            0: { fill: 'red' },
-            1: { fill: 'red' },
-            2: { fill: 'red' }
-          },
-          2: {
-            0: { fill: 'blue' },
-            1: { fill: 'blue' },
-            2: { fill: 'blue' },
-            3: { fill: 'blue' }
-          }
-        }
-      });
-
-      canvas.add(iText, iText2);
-    }
-
-    addTexts();
-
 
     $scope.getPreserveObjectStacking = function() {
       return canvas.preserveObjectStacking;
@@ -1095,18 +1004,100 @@ dragIn = function(e) {
       console.log(img);
       var rex = /src="?([^"\s]+)"?\s*/;
       var url = rex.exec(img);
-      fabric.Image.fromURL(url[1], function(oImg) {
-        canvas.add(oImg);
+      new fabric.Image.fromURL(url[1],  function(oImg) {
+          canvas.add(oImg);
       });
 
+      if ($scope.mapObject === true) {
+        var group = 'mapGroup';
+      }
+
+      if ($scope.mapObject === false) {
+
+        let newToken = { attributes: {},
+            health: '',
+            mana: '',
+            stamina: ''
+        };
+
+        connection.post('/api/token/create', newToken).then( function (result) {
+            $scope.$broadcast('newToken', { id: result.item._id });
+        });
+
+      }
+
       console.log("Drop started");
-      $('#canvas').removeClass('highlight');;
+      $('#canvas').removeClass('highlight');
 
       console.log('Drop done');
     }
   $main.on('drop', dropImage);
   $main.on('dragover dragenter', dragIn);
   $main.on('dragexit dragleave', dragOut);
+
+  $scope.$on('newToken', function(event, args) {
+    var tokens = canvas.getObjects();
+    for (token of tokens) {
+      if (!token.group) {
+    token.toObject = (function(toObject) {
+      return function() {
+        return fabric.util.object.extend(toObject.call(this), {
+          tokenID: this.tokenID,
+        });
+      };
+    })(token.toObject);
+
+    token.tokenID = args.id;
+
+    }
+  }
+
+  });
+
+  $scope.mapLockOff = function() {
+      $scope.mapLock = false;
+      var canvasObjects = canvas.getObjects();
+      for (object of canvasObjects) {
+        if (!object.tokenID) {
+            object._objects.set('selectable', true);
+            object._objects.set('hoverCursor', 'move');
+        }
+      }
+    }
+
+    $scope.mapLockOn = function() {
+      $scope.mapLock = true;
+      var canvasObjects = canvas.getObjects();
+      for (object of canvasObjects) {
+        if (!object.tokenID) {
+            object._objects.set('selectable', false);
+            object._objects.set('hoverCursor', 'default');
+        }
+      }
+    }
+
+  $scope.tokenLockOff = function() {
+      $scope.tokenLock = false;
+      var canvasObjects = canvas.getObjects();
+      for (object of canvasObjects) {
+        if (object.tokenID) {
+          object._objects.set('selectable', true);
+          object._objects.set('hoverCursor', 'move');
+          console.log(object);
+        }
+      }
+    }
+
+      $scope.tokenLockOn = function() {
+      $scope.tokenLock = true;
+      var canvasObjects = canvas.getObjects();
+      for (object of canvasObjects) {
+        if (object.tokenID) {
+          object._objects.set('selectable', false);
+          object._objects.set('hoverCursor', 'default');
+        }
+      }
+    }
 
   var googleKey =  'AIzaSyDDj8FP9qZBQPEf6lxsjO-ozuk6WhbrEvM';
 
@@ -1170,59 +1161,44 @@ dragIn = function(e) {
            }
          });
        };
+    });
 
-        canvas.on('mouse:down', function(opt) {
-  var evt = opt.e;
-  if (evt.ctrlKey === true) {
-    this.isDragging = true;
-    this.selection = false;
-    this.lastPosX = evt.clientX;
-    this.lastPosY = evt.clientY;
-  }
-});
-canvas.on('mouse:move', function(opt) {
-  if (this.isDragging) {
-    var e = opt.e;
-    this.viewportTransform[4] += e.clientX - this.lastPosX;
-    this.viewportTransform[5] += e.clientY - this.lastPosY;
-    this.requestRenderAll();
-    this.lastPosX = e.clientX;
-    this.lastPosY = e.clientY;
-  }
-});
-canvas.on('mouse:up', function(opt) {
-  this.isDragging = false;
-  this.selection = true;
-});
+       canvas.on('mouse:down', function(opt) {
+         var evt = opt.e;
+         if (evt.ctrlKey === true) {
+           this.isDragging = true;
+           this.selection = false;
+           this.lastPosX = evt.clientX;
+           this.lastPosY = evt.clientY;
+         }
+       });
+
+       canvas.on('mouse:up', function(opt) {
+         this.isDragging = false;
+         this.selection = true;
+       })
+
+       canvas.on('mouse:move', function(opt) {
+         if (this.isDragging) {
+           var e = opt.e;
+           this.viewportTransform[4] += e.clientX - this.lastPosX;
+           this.viewportTransform[5] += e.clientY - this.lastPosY;
+           this.requestRenderAll();
+           this.lastPosX = e.clientX;
+           this.lastPosY = e.clientY;
+         }
+       });
 
 
-
-canvas.on('mouse:wheel', function(opt) {
-var delta = opt.e.deltaY;
-var pointer = canvas.getPointer(opt.e);
-var zoom = canvas.getZoom();
-zoom = zoom + delta/200;
-if (zoom > 20) zoom = 20;
-if (zoom < 0.01) zoom = 0.01;
-canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-opt.e.preventDefault();
-opt.e.stopPropagation();
-var vpt = this.viewportTransform;
-if (zoom < 400 / 1000) {
-  this.viewportTransform[4] = 200 - 1000 * zoom / 2;
-  this.viewportTransform[5] = 200 - 1000 * zoom / 2;
-} else {
-  if (vpt[4] >= 0) {
-    this.viewportTransform[4] = 0;
-  } else if (vpt[4] < canvas.getWidth() - 1000 * zoom) {
-    this.viewportTransform[4] = canvas.getWidth() - 1000 * zoom;
-  }
-  if (vpt[5] >= 0) {
-    this.viewportTransform[5] = 0;
-  } else if (vpt[5] < canvas.getHeight() - 1000 * zoom) {
-    this.viewportTransform[5] = canvas.getHeight() - 1000 * zoom;
-  }
-}
-});
+       canvas.on('mouse:wheel', function(opt) {
+         var delta = opt.e.deltaY;
+         var pointer = canvas.getPointer(opt.e);
+         var zoom = canvas.getZoom();
+         zoom = zoom + delta/200;
+         if (zoom > 20) zoom = 20;
+         if (zoom < 0.01) zoom = 0.01;
+         canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+         opt.e.preventDefault();
+         opt.e.stopPropagation();
+      });
   });
-});
