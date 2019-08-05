@@ -129,6 +129,10 @@ a:focus {
   display: none;
 }
 
+.show {
+  display: block;
+}
+
 .hidden {
   display: none!important;
   visibility: collapse!important;

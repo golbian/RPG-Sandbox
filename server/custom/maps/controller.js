@@ -83,7 +83,6 @@ exports.MapsUpdate = function (req, res) {
     req.query.companyid = true;
     req.query.properties = true;
     var data = req.body;
-    console.log(data);
 
     if (!req.session.isWSTADMIN) {
         var Maps = connection.model('Maps');

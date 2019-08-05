@@ -24,7 +24,7 @@ angular.module('app').controller('mapCtrl', function ($scope, $uibModal, connect
 $scope.mapName = function () {
         if ($scope.mode === 'add') {
             $('#theMapNameModal').modal('show');
-              $scope.mapNameSave();
+            $scope.mapNameSave();
         }
     };
 
@@ -1004,9 +1004,6 @@ dragIn = function(e) {
       console.log(img);
       var rex = /src="?([^"\s]+)"?\s*/;
       var url = rex.exec(img);
-      new fabric.Image.fromURL(url[1],  function(oImg) {
-          canvas.add(oImg);
-      });
 
       if ($scope.mapObject === true) {
         var group = 'mapGroup';
@@ -1020,11 +1017,40 @@ dragIn = function(e) {
             stamina: ''
         };
 
-        connection.post('/api/token/create', newToken).then( function (result) {
-            $scope.$broadcast('newToken', { id: result.item._id });
+        canvas.on('object:added', function() {
+          connection.post('/api/token/create', newToken).then( function (result) {
+            var tokens = canvas.getObjects();
+            for (token of tokens) {
+              if (!token.group) {
+                if(!token.tokenID) {
+            token.toObject = (function(toObject) {
+              return function() {
+                return fabric.util.object.extend(toObject.call(this), {
+                  tokenID: this.tokenID,
+                });
+              };
+            })(token.toObject);
+
+            token.tokenID = result.item._id;
+
+            }
+          }
+        }
+              //$scope.$broadcast('newToken', { id: result.item._id });
+          });
         });
 
+
+        // $scope.$on('newToken', function(event, args) {
+        //
+        //
+        // });
+
       }
+
+      new fabric.Image.fromURL(url[1],  function(oImg) {
+          canvas.add(oImg);
+      });
 
       console.log("Drop started");
       $('#canvas').removeClass('highlight');
@@ -1034,25 +1060,6 @@ dragIn = function(e) {
   $main.on('drop', dropImage);
   $main.on('dragover dragenter', dragIn);
   $main.on('dragexit dragleave', dragOut);
-
-  $scope.$on('newToken', function(event, args) {
-    var tokens = canvas.getObjects();
-    for (token of tokens) {
-      if (!token.group) {
-    token.toObject = (function(toObject) {
-      return function() {
-        return fabric.util.object.extend(toObject.call(this), {
-          tokenID: this.tokenID,
-        });
-      };
-    })(token.toObject);
-
-    token.tokenID = args.id;
-
-    }
-  }
-
-  });
 
   $scope.mapLockOff = function() {
       $scope.mapLock = false;

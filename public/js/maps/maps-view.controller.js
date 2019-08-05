@@ -42,6 +42,12 @@
     $scope.mapName = function () {
             if ($scope.mode === 'edit') {
                 $('#theMapNameModal').modal('show');
+                var tokens = canvas.getObjects();
+                for (token of tokens) {
+                  if (token.tokenID === ) {
+                connection.post('/api/token/update/'+ token.tokenID, {attributes: {}, health: 15, mana: 20, stamina: 10})
+              }
+            }
                   $scope.mapNameSave();
             }
         };
@@ -1102,13 +1108,6 @@
           console.log(img);
           var rex = /src="?([^"\s]+)"?\s*/;
           var url = rex.exec(img);
-          new fabric.Image.fromURL(url[1],  function(oImg) {
-              canvas.add(oImg);
-          });
-
-          if ($scope.mapObject === true) {
-            var group = 'mapGroup';
-          }
 
           if ($scope.mapObject === false) {
 
@@ -1118,11 +1117,32 @@
                 stamina: ''
             };
 
-            connection.post('/api/token/create', newToken).then( function (result) {
-                $scope.$broadcast('newToken', { id: result.item._id });
-            });
+            canvas.on('object:added', function() {
+              connection.post('/api/token/create', newToken).then( function (result) {
+                var tokens = canvas.getObjects();
+                for (token of tokens) {
+                  if (!token.group) {
+                    if(!token.tokenID) {
+                token.toObject = (function(toObject) {
+                  return function() {
+                    return fabric.util.object.extend(toObject.call(this), {
+                      tokenID: this.tokenID,
+                    });
+                  };
+                })(token.toObject);
 
-          }
+                token.tokenID = result.item._id;
+
+                }
+              }
+            }
+              });
+            });
+        }
+
+          new fabric.Image.fromURL(url[1],  function(oImg) {
+              canvas.add(oImg);
+          });
 
           console.log("Drop started");
           $('#canvas').removeClass('highlight');;
@@ -1133,25 +1153,6 @@
       $main.on('dragover dragenter', dragIn);
       $main.on('dragexit dragleave', dragOut);
 
-      $scope.$on('newToken', function(event, args) {
-        var tokens = canvas.getObjects();
-        for (token of tokens) {
-          if (!token.group) {
-        token.toObject = (function(toObject) {
-          return function() {
-            return fabric.util.object.extend(toObject.call(this), {
-              tokenID: this.tokenID,
-            });
-          };
-        })(token.toObject);
-
-        token.tokenID = args.id;
-
-        }
-      }
-
-      });
-
       fabric.Canvas.prototype.getAbsoluteCoords = function(object) {
         return {
           left: object.left + this._offset.left,
@@ -1159,114 +1160,152 @@
         };
       }
 
-      canvas.on('selection:created', function() {
+      canvas.on('selection:created', function(e) {
 
         var activeObject = canvas.getActiveObject();
+        console.log(e);
 
         if (activeObject.tokenID) {
-          $('#bd-wrapper').append('<div id="overlayToken" style="position:absolute">'+
-          '<div class="button">'+
-            '<div class="health">'+
-            '  <span></span>'+
-            '</div>'+
-          '</div>'+
-          '<div class="button">'+
-            '<div class="mana">'+
-              '<span></span>'+
-            '</div>'+
-          '</div>'+
-          '<div class="button">'+
-            '<div class="stamina">'+
-              '<span></span>'+
-            '</div>'+
-          '</div>'+
-          '<div class="tokenEdit">'+
-            '<i class="fa fa-cogs"></i>'+
-          '</div>'+
-        '</div>')
+          if ($('#overlayToken'+ activeObject.tokenID).length) {
 
-      var id = activeObject.tokenID;
-
-      connection.get('/api/token/find-one', id).then(function (result) {
-        console.log(result);
-      })
-
-      var overlayToken = $('#overlayToken'),
-      overlayTokenWidth = 100,
-      overlayTokenHeight = 100;
-
-      console.log(overlayToken);
+            $('#overlayToken'+ activeObject.tokenID).removeClass('hide');
+            $('#overlayToken'+ activeObject.tokenID).addClass('show');
 
 
-      function positionOverlay(activeObject) {
-      var absCoords = canvas.getAbsoluteCoords(activeObject);
 
-      overlayToken[0].style.left = (absCoords.left - overlayTokenWidth / 2) + 'px';
-      overlayToken[0].style.top = (absCoords.top - overlayTokenHeight / 2) + 'px';
-      }
+      // var id = activeObject.tokenID;
 
-      activeObject.on('moving', function() { positionOverlay(activeObject) });
-      activeObject.on('scaling', function() { positionOverlay(activeObject) });
-      positionOverlay(activeObject);
-    }
+      // connection.get('/api/token/find-one', id).then(function (result) {
+      //   console.log('hello');
+      //   console.log(result);
+      // })
+
+
+
+    // $scope.$broadcast('previousID', { id: activeObject.tokenID });
+  } else {
+
+    $('#bd-wrapper').append('<div id="overlayToken'+ activeObject.tokenID +'" style="position:absolute">'+
+    '<div class="button">'+
+      '<div class="health">'+
+      '<h3   editable-text="healthNum" blur="submit">{{ healthNum }}</h3>'+
+      '</div>'+
+    '</div>'+
+    '<div class="button">'+
+      '<div class="mana">'+
+        '<h3   editable-text="manaNum" blur="submit">{{ manaNum }}</h3>'+
+      '</div>'+
+    '</div>'+
+    '<div class="button">'+
+      '<div class="stamina">'+
+        '<h3   editable-text="staminaNum" blur="submit">{{ staminaNum }}</h3>'+
+      '</div>'+
+    '</div>'+
+    '<div class="tokenEdit">'+
+      '<i class="fa fa-cogs"></i>'+
+    '</div>'+
+  '</div>')
+
+  var overlayToken = $('#overlayToken'+ activeObject.tokenID),
+  overlayTokenWidth = 100,
+  overlayTokenHeight = 100;
+
+  console.log(overlayToken);
+
+
+  function positionOverlay(activeObject) {
+  var absCoords = canvas.getAbsoluteCoords(activeObject);
+
+  overlayToken[0].style.left = (absCoords.left - overlayTokenWidth / 2) + 'px';
+  overlayToken[0].style.top = (absCoords.top - overlayTokenHeight / 2) + 'px';
+  }
+
+  activeObject.on('moving', function() { positionOverlay(activeObject) });
+  activeObject.on('scaling', function() { positionOverlay(activeObject) });
+  positionOverlay(activeObject);
+  }
+}
 
   });
 
-  canvas.on('selection:updated', function() {
+  canvas.on('selection:updated', function(e) {
+
+    var activeObject = canvas.getActiveObject();
+    console.log(activeObject);
+
+    //$('#overlayToken'+ activeObject.tokenID).addClass('hide');
+
+    if (activeObject.tokenID) {
+      if ($('#overlayToken'+ activeObject.tokenID).length) {
+
+        $('#overlayToken'+ activeObject.tokenID).removeClass('hide');
+        $('#overlayToken'+ activeObject.tokenID).addClass('show');
+
+
+        var previousID = e.deselected[0].tokenID;
+
+        $('#overlayToken'+ previousID).removeClass('show');
+        $('#overlayToken'+ previousID).addClass('hide');
+
+    } else {
+
+      $('#bd-wrapper').append('<div id="overlayToken'+ activeObject.tokenID +'" style="position:absolute">'+
+      '<div class="button">'+
+        '<div class="health">'+
+        '<h3   editable-text="healthNum" blur="submit">{{ healthNum }}</h3>'+
+        '</div>'+
+      '</div>'+
+      '<div class="button">'+
+        '<div class="mana">'+
+          '<h3   editable-text="manaNum" blur="submit">{{ manaNum }}</h3>'+
+        '</div>'+
+      '</div>'+
+      '<div class="button">'+
+        '<div class="stamina">'+
+          '<h3   editable-text="staminaNum" blur="submit">{{ staminaNum }}</h3>'+
+        '</div>'+
+      '</div>'+
+      '<div class="tokenEdit">'+
+        '<i class="fa fa-cogs"></i>'+
+      '</div>'+
+    '</div>')
+
+    var overlayToken = $('#overlayToken'+ activeObject.tokenID),
+    overlayTokenWidth = 5,
+    overlayTokenHeight = 5;
+
+    function positionOverlay(activeObject) {
+    var absCoords = canvas.getAbsoluteCoords(activeObject);
+
+    overlayToken[0].style.left = (absCoords.left - overlayTokenWidth) + 'px';
+    overlayToken[0].style.top = (absCoords.top - overlayTokenHeight) + 'px';
+    }
+
+    activeObject.on('moving', function() { positionOverlay(activeObject) });
+    activeObject.on('scaling', function() { positionOverlay(activeObject) });
+    positionOverlay(activeObject);
+
+    var previousID = e.deselected[0].tokenID;
+
+    $('#overlayToken'+ previousID).removeClass('show');
+    $('#overlayToken'+ previousID).addClass('hide');
+
+    }
+  }
+
+  });
+
+  canvas.on('before:selection:cleared', function() {
 
     var activeObject = canvas.getActiveObject();
 
-    $('#overlayToken').remove();
+    // $scope.$on('previousID', function(event, args) {
+    //   var previousTokenID = args.id;
+    //   $('#overlayToken'+ previousTokenID).addClass('hide');
 
-    if (activeObject.tokenID) {
-
-      $('#bd-wrapper').append('<div id="overlayToken" style="position:absolute">'+
-         '<div class="button">'+
-           '<div class="health">'+
-            '  <span></span>'+
-           '</div>'+
-         '</div>'+
-         '<div class="button">'+
-           '<div class="mana">'+
-              '<span></span>'+
-           '</div>'+
-         '</div>'+
-         '<div class="button">'+
-           '<div class="stamina">'+
-              '<span></span>'+
-           '</div>'+
-         '</div>'+
-         '<div class="tokenEdit">'+
-            '<i class="fa fa-cogs"></i>'+
-         '</div>'+
-      '</div>')
-
-      var overlayToken = $('#overlayToken'),
-      overlayTokenWidth = 5,
-      overlayTokenHeight = 5;
-
-      console.log(overlayToken);
-
-
-      function positionOverlay(activeObject) {
-      var absCoords = canvas.getAbsoluteCoords(activeObject);
-
-      overlayToken[0].style.left = (absCoords.left - overlayTokenWidth) + 'px';
-      overlayToken[0].style.top = (absCoords.top - overlayTokenHeight) + 'px';
-      }
-
-      activeObject.on('moving', function() { positionOverlay(activeObject) });
-      activeObject.on('scaling', function() { positionOverlay(activeObject) });
-      positionOverlay(activeObject);
-
-    }
-
-  });
-
-  canvas.on('selection:cleared', function() {
-
-    $('#overlayToken').remove();
-
+    // });
+    $('#overlayToken'+ activeObject.tokenID).removeClass('show');
+    $('#overlayToken'+ activeObject.tokenID).addClass('hide');
   })
 
 
