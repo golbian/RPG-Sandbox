@@ -1,11 +1,12 @@
 module.exports = function (app) {
-    var token = require('./controller.js');
+    var Token = require('./controller.js');
 
     /* Tokens */
-    app.get('/api/token/find-all', restrict, token.TokensFindAll);
-    app.get('/api/token/find-one', restrict, token.TokensFindOne);
-    app.post('/api/token/create', restrict, token.TokensCreate);
-    app.post('/api/token/update/:id', restrict, token.TokensUpdate);
-    app.post('/api/token/delete/:id', restrict, token.TokensDelete);
-    app.get('/api/token/get-token-data/:id', restrict, token.TokensGetData);
+    app.get('/api/token/find-all', restrict, Token.TokensFindAll);
+    app.get('/api/token/find-one', restrict, Token.TokensFindOne);
+    app.post('/api/token/create', restrict, Token.TokensCreate);
+    app.post('/api/token/update/:id', restrict, Token.TokensUpdate);
+    app.post('/api/token/delete/:id', restrict, Token.TokensDelete);
+    app.get('/api/token/get-token/:id', Token.GetToken);
+    app.get('/api/token/get-token-data/:id', restrict, Token.TokensGetData);
 };

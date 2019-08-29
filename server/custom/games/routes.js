@@ -1,7 +1,7 @@
 module.exports = function (app) {
     var Games = require('./controller.js');
 
-    /* Reports */
+    /* Games */
     app.get('/api/games/find-all', restrict, Games.GamesFindAll);
     app.get('/api/games/find-one', restrict, Games.GamesFindOne);
     app.post('/api/games/create', restrict, Games.GamesCreate);

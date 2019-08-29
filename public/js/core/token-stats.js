@@ -1,9 +1,9 @@
 (function () {
     'use strict';
 
-    angular.module('app.core').factory('tokenStats', tokenStats);
+    angular.module('app.core').factory('tokenService', tokenService);
 
-    tokenStats.$inject = ['api'];
+    tokenService.$inject = ['api'];
 
     function tokenService (api) {
         let getTokenDataPromise;

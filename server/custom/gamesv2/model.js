@@ -5,7 +5,6 @@ var Gamesv2Schema = new mongoose.Schema({
     gameName: { type: String, required: true },
     gameDescription: { type: String },
     gameType: { type: String },
-    html: { type: String },
     maps: [],
     items: [],
     backgroundColor: { type: String },

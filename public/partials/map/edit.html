@@ -1,9 +1,11 @@
-<div id="bd-wrapper">
+<div id="bd-wrapper" class="explorer-main-container">
 
 <link href='http://fonts.googleapis.com/css?family=Plaster' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Engagement' rel='stylesheet' type='text/css'>
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <div class="explorer-header" ng-init="initMapEdit()">
 
         <div class="explorer-header-title">
                 <h3   editable-text="selectedMap.mapName" blur="submit">{{ selectedMap.mapName }}</h3>
@@ -15,8 +17,9 @@
                 <a ng-if="isForGame != true" ng-click="goBack();" class="btn btn-default pull-right" uib-tooltip="{{'Click here to cancel and backtrack' | translate}}" tooltip-placement="bottom" translate>Cancel</a>
                 <a ng-if="isForGame == true" ng-click="cancelMap(selectedMap);" class="btn btn-default pull-right" uib-tooltip="{{'Click here to cancel and back to the game' | translate}}" tooltip-placement="bottom" translate>Cancel</a>
     </div>
+  </div>
 
-<div class="row">
+<div class="row explorer-body">
 <div class="col-md-9" style="position:relative;width:auto;float:left;" id="canvas-wrapper">
   <canvas id="canvas" width="1400" height="910"></canvas>
 </div>
@@ -556,8 +559,7 @@
 </script>
 
     </div>
-
-    <appOverlayToken><appOverlayToken/>
+    </div>
 
     </div>
 

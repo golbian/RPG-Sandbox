@@ -31,6 +31,7 @@
                 resolve: {
                     title: () => gettextCatalog.getString('Delete {{name}} ?', { name: vm.game.gameName }),
                     delete: () => function () {
+                      console.log(vm.game);
                         return api.deleteGame(vm.game._id);
                     },
                 },
@@ -89,7 +90,7 @@
         function getCopyLink () {
             const protocol = window.location.protocol;
             const host = window.location.host;
-            return protocol + '//' + host + '/#/games/view/' + vm.game._id;
+            return protocol + '//' + host + '/#/games/edit/' + vm.game._id;
         }
     }
 })();

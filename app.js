@@ -1,6 +1,7 @@
 const config = require('config');
 
 const express = require('express');
+const enableWs = require('express-ws')
 const path = require('path');
 
 var passport = require('passport');
@@ -11,6 +12,8 @@ const MongoStore = require('connect-mongo')(session);
 var cookieParser = require('cookie-parser');
 
 var app = express();
+
+enableWs(app);
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');

@@ -30,6 +30,7 @@ angular.module('app').service('mapModel', function ($q, connection, FileSaver) {
         if (mode === 'add') {
             url = '/api/maps/create';
         } if (mode === 'edit') {
+          console.log(map);
             url = '/api/maps/update/' + map._id;
         }
 

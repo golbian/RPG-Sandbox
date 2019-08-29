@@ -1,10 +1,10 @@
-var Token = connection.model('Token');
+var Tokens = connection.model('Token');
 
 const Controller = require('../../core/controller.js');
 
 class TokensController extends Controller {
     constructor () {
-        super(Token);
+        super(Tokens);
     }
 }
 
@@ -18,32 +18,35 @@ exports.TokensFindAll = async function (req, res) {
 };
 
 exports.GetToken = function (req, res) {
-    req.query.trash = true;
+      req.query.trash = true;
+      console.log(req.query);
 
-    controller.findOne(req).then(function (result) {
-        if (!result.item || (!result.item.isPublic && !req.isAuthenticated())) {
-            return res.status(403).send('Forbidden');
-        }
+      controller.findOne(req).then(function (result) {
+          // if (!result.item || (!result.item.isPublic && !req.isAuthenticated())) {
+          //     return res.status(403).send('Forbidden');
+          // }
 
-        res.status(200).json(result);
-        if (result.item) {
-            // Note the execution in statistics
-            var statistics = connection.model('statistics');
-            var stat = {};
-            stat.type = 'token';
+          res.status(200).json(result);
+          if ((req.query.mode === 'execute' || req.query.mode === 'preview') && result.item) {
+              // Note the execution in statistics
+              var statistics = connection.model('statistics');
+              var stat = {};
+              stat.type = 'token';
+              stat.relationedID = result.item._id;
 
-            if (req.query.linked === true) {
-                stat.action = 'execute link';
-            } else {
-                stat.action = 'execute';
-            }
-            statistics.save(req, stat);
-        }
-    });
-};
+              if (req.query.linked === true) {
+                  stat.action = 'execute link';
+              } else {
+                  stat.action = 'execute';
+              }
+              statistics.save(req, stat);
+          }
+      });
+  };
 
 exports.TokensFindOne = function (req, res) {
     req.query.trash = true;
+    req.query.companyid = true;
 
     controller.findOne(req).then(function (result) {
         res.status(200).json(result);
@@ -66,12 +69,12 @@ exports.TokensCreate = function (req, res) {
 exports.TokensUpdate = function (req, res) {
     req.query.trash = true;
     req.query.companyid = true;
-    req.query.properties = true;
     var data = req.body;
+    console.log(data);
 
     if (!req.session.isWSTADMIN) {
         var Tokens = connection.model('Token');
-        Tokens.findOne({ _id: data._id }, { _id: 1 }, {}, function (err, item) {
+        Tokens.findOne({ _id: data._id, owner: req.user._id, companyID: req.user.companyID }, { _id: 1 }, {}, function (err, item) {
             if (err) throw err;
             if (item) {
                 controller.update(req).then(function (result) {

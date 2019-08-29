@@ -28,9 +28,21 @@ $scope.mapName = function () {
         }
     };
 
+    $scope.$on('newMapForGame', function (event, args) {
+        $scope.mode = 'add';
+        $scope.isForGame = true;
+        $scope.newForm;
+    });
+      $scope.newForm = function () {
+        $scope.selectedMap = {};
+        $scope.selectedMap.properties = {};
+        $scope.mode = 'add';
+      };
+
+
     $scope.mapNameSave = function () {
 
-      var saveJSON = JSON.stringify(canvas.toJSON());
+      var saveJSON = JSON.stringify(canvas.toJSON(['tokenID']));
 
       $scope.selectedMap.properties = saveJSON;
 
@@ -1011,13 +1023,15 @@ dragIn = function(e) {
 
       if ($scope.mapObject === false) {
 
-        let newToken = { attributes: {},
-            health: '',
-            mana: '',
-            stamina: ''
+        let newToken = {
+            health: 0,
+            mana: 0,
+            stamina: 0,
+            companyID: 'COMPID',
+            owner: '5d12fccb1b2ea11164aa3df9'
+
         };
 
-        canvas.on('object:added', function() {
           connection.post('/api/token/create', newToken).then( function (result) {
             var tokens = canvas.getObjects();
             for (token of tokens) {
@@ -1036,15 +1050,7 @@ dragIn = function(e) {
             }
           }
         }
-              //$scope.$broadcast('newToken', { id: result.item._id });
           });
-        });
-
-
-        // $scope.$on('newToken', function(event, args) {
-        //
-        //
-        // });
 
       }
 

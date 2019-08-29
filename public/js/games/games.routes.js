@@ -7,7 +7,7 @@
 
     function configure ($routeProvider) {
         $routeProvider.when('/games/view/:gameID', {
-            templateUrl: 'partials/games/view.html',
+            templateUrl: 'partials/games/edit.html',
             controller: 'GamesViewController',
             controllerAs: 'vm',
             resolve: {

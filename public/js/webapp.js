@@ -44,13 +44,13 @@
             controller: 'homeCtrl'
         });
 
-        $routeProvider.when('/games/new/:newGame/', {
+        $routeProvider.when('/games/new/:gameID', {
             templateUrl: 'partials/gamev2/edit.html',
             controller: 'gamev2Ctrl'
         });
 
-        $routeProvider.when('/games/edit/:gameID/', {
-            templateUrl: 'partials/gamev2/edit.html',
+        $routeProvider.when('/games/edit/', {
+            templateUrl: 'partials/games/edit.html',
             controller: 'gamev2Ctrl'
         });
 

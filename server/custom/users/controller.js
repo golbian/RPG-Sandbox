@@ -147,6 +147,7 @@ exports.getCounts = function (req, res) {
 
     if (isWSTADMIN) {
         // get all games
+        var Games = connection.model('Games');
         Games.count({companyID: companyID, owner: req.user._id, nd_trash_deleted: false}, function (err, gamesCount) {
             if (err) { console.error(err); }
 
@@ -169,16 +170,17 @@ exports.getCounts = function (req, res) {
                 });
     } else {
         // get all games
+        var Games = connection.model('Games');
         Games.count({companyID: companyID, owner: req.user._id, nd_trash_deleted: false}, function (err, gameCount) {
             if (err) { console.error(err); }
 
-            theCounts.games = gamesCount;
+            theCounts.games = gameCount;
             // get all maps
             var Maps = connection.model('Maps');
             Maps.count({companyID: companyID, owner: req.user._id, nd_trash_deleted: false}, function (err, mapCount) {
                 if (err) { console.error(err); }
 
-                theCounts.maps = mapsCount;
+                theCounts.maps = mapCount;
             });
         });
     }
@@ -191,24 +193,24 @@ exports.getCountsForUser = function (req, res) {
 
     // get all games
     var Games = connection.model('Games');
-    Games.count({companyID: companyID, owner: userID, isPublic: true, nd_trash_deleted: false}, function (err, gameCount) {
+    Games.count({companyID: companyID, owner: userID, isPublic: true, nd_trash_deleted: false}, function (err, gamesCount) {
         if (err) { console.error(err); }
 
         theCounts.publishedGames = gamesCount;
         // get all maps
         var Maps = connection.model('Maps');
-        Maps.count({companyID: companyID, owner: userID, isPublic: true, nd_trash_deleted: false}, function (err, mapCount) {
+        Maps.count({companyID: companyID, owner: userID, isPublic: true, nd_trash_deleted: false}, function (err, mapsCount) {
             if (err) { console.error(err); }
 
             theCounts.publishedMaps = mapsCount;
 
-            Games.count({companyID: companyID, owner: userID, isPublic: false, nd_trash_deleted: false}, function (err, privateGameCount) {
+            Games.count({companyID: companyID, owner: userID, isPublic: false, nd_trash_deleted: false}, function (err, privateGamesCount) {
                 if (err) { console.error(err); }
 
                 theCounts.privateGames = privateGamesCount;
 
                 var Maps = connection.model('Maps');
-                Maps.count({companyID: companyID, owner: userID, isPublic: false, nd_trash_deleted: false}, function (err, privateMapCount) {
+                Maps.count({companyID: companyID, owner: userID, isPublic: false, nd_trash_deleted: false}, function (err, privateMapsCount) {
                     if (err) { console.error(err); }
 
                     theCounts.privateMaps = privateMapsCount;
@@ -236,7 +238,7 @@ exports.getUserMaps = function (req, res) {
     var userID = req.query.userID;
     var companyID = req.user.companyID;
     var Maps = connection.model('Maps');
-    Maps.find({companyID: companyID, owner: userID, nd_trash_deleted: false}, {mapName: 1, parentFolder: 1, isPublic: 1, mapDescription: 1, status: 1}, function (err, privateMapCount) {
+    Maps.find({companyID: companyID, owner: userID, nd_trash_deleted: false}, {mapName: 1, parentFolder: 1, isPublic: 1, mapDescription: 1, status: 1}, function (err, maps) {
         if (err) { console.error(err); }
 
         res.status(200).json({result: 1, page: page, pages: 1, items: maps});

@@ -54,8 +54,9 @@ gulp.task('dist:js', ['clean:js'], function () {
       'node_modules/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
       'node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js',
       'node_modules/angular-gettext/dist/angular-gettext.min.js',
-        'node_modules/d20/d20.js',
-        'node_modules/canvas/lib/canvas.js'
+      'node_modules/d20/d20.js',
+      'node_modules/socket.io/lib/socket.js',
+      'node_modules/socket.io-client/lib/socket.js'
         /*
         'node_modules/canvas/lib/context2d.js',
         'node_modules/canvas/lib/bindings.js',
@@ -67,17 +68,14 @@ gulp.task('dist:js', ['clean:js'], function () {
         'node_modules/canvas/lib/pngstream.js',
         'node_modules/blob/index.js',
         'node_modules/canvas-toBlob/canvas-toBlob.js',
-
         'node_modules/socket.io/lib/client.js',
         'node_modules/socket.io/lib/index.js',
         'node_modules/socket.io/lib/namespace.js',
         'node_modules/socket.io/lib/parent-namespace.js',
-        'node_modules/socket.io/lib/socket.js',
         'node_modules/socket.io-adapter/index.js',
         'node_modules/socket.io-client/lib/index.js',
         'node_modules/socket.io-client/lib/manager.js',
         'node_modules/socket.io-client/lib/on.js',
-        'node_modules/socket.io-client/lib/socket.js',
         'node_modules/socket.io-client/lib/url.js',
         'node_modules/socket.io-client/dist/socket.io.js',
         'node_modules/socket.io-parser/binary.js',

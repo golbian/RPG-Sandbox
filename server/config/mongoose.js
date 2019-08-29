@@ -48,7 +48,6 @@ module.exports = function (_, done) {
     // Custom models
     var models_dir = path.join(__dirname, '..', 'custom');
     fs.readdirSync(models_dir).forEach(function (file) {
-      console.log(file);
         if (file[0] === '.') return;
         require(models_dir + '/' + file + '/model.js');
     });

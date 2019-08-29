@@ -1,10 +1,13 @@
-    angular.module('app').controller('MapsViewController', MapsViewController);
+    angular.module('app.maps').controller('MapsViewController', MapsViewController);
 
-    MapsViewController.$inject = ['$scope', 'connection', '$compile', 'mapModel', '$routeParams', '$uibModal', '$timeout', 'map'];
+    MapsViewController.$inject = ['$scope', 'connection', '$compile', 'userService', 'mapModel', '$routeParams', '$uibModal', '$timeout', 'map'];
 
-    function MapsViewController ($scope, connection, $compile, mapModel, $routeParams, $uibModal, $timeout, map) {
+    function MapsViewController ($scope, connection, $compile, userService, mapModel, $routeParams, $uibModal, $timeout, map) {
         const vm = this;
         vm.map = map;
+        $scope.selectedMap = {};
+        $scope.selectedMap._id = vm.map._id;
+        $scope.selectedMap.chat = {};
         $scope.mapNameModal = 'partials/map/modals/mapNameModal.html';
         $scope.gameListModal = 'partials/map/modals/gameListModal.html';
         $scope.mode = 'edit';
@@ -15,6 +18,67 @@
         $scope.tokenObject = false;
         $scope.mapLock = false;
         $scope.tokenLock = false;
+
+        var socket = new WebSocket('ws://127.0.0.1:9090/&num/maps/edit/'+vm.map._id, [], {'force new connection':true} );
+
+        socket.onopen = () => {
+          console.log('socket on');
+        }
+
+          socket.addEventListener('message', function(msg){
+
+              var data = msg.data;
+              data = JSON.parse(data);
+
+              if (data.type === 'msg') {
+                $('#chat-output').append('<div style="font-size:20px; font-family:Palatino Linotype, Book Antiqua, Palatino, serif; " class="msg">'+'<span>'+ data.user +' : '+ data.msg +'</span>'+'</div>');
+                }
+
+                if (data.type === 'roll') {
+                  $('#chat-output').append('<div style="font-size:20px; font-family:Palatino Linotype, Book Antiqua, Palatino, serif; " class="rollMsg">'+'<span>'+ data.user +' : Rolling ('+ data.input +') => '+ data.output +'</span>'+'</div>');
+                }
+            });
+
+
+        $scope.$on('loadMapStrucutureForGame', function (event, args) {
+            var map = args.map;
+
+            $scope.selectedMap = map;
+            $scope.mode = 'edit';
+            $scope.isForGame = true;
+
+          });
+
+        $('.chatForm').submit(function (e) {
+
+          userService.getCurrentUser().then(function(result){
+            var user = result.userName;
+
+
+          if ($scope.selectedMap.chat.messages.startsWith('/roll')) {
+            var inputRoll = $scope.selectedMap.chat.messages.slice(5);
+            var outputRoll = d20.roll(inputRoll);
+
+            var messages = {
+              user: user,
+              type: 'roll',
+              input: inputRoll,
+              output: outputRoll
+            }
+
+            socket.send(JSON.stringify(messages));
+
+          } else {
+            var messages = {
+              user: user,
+              type: 'msg',
+              msg: $scope.selectedMap.chat.messages
+            };
+            socket.send(JSON.stringify(messages));
+          }
+        });
+      });
+
 
 
         $scope.initMapList = function () {
@@ -37,28 +101,21 @@
 
         initCanvas();
 
-        //console.log(jsonSaveString);
 
     $scope.mapName = function () {
             if ($scope.mode === 'edit') {
                 $('#theMapNameModal').modal('show');
-                var tokens = canvas.getObjects();
-                for (token of tokens) {
-                  if (token.tokenID === ) {
-                connection.post('/api/token/update/'+ token.tokenID, {attributes: {}, health: 15, mana: 20, stamina: 10})
-              }
-            }
-                  $scope.mapNameSave();
+                $scope.mapNameSave();
             }
         };
 
         $scope.mapNameSave = function () {
 
-          var saveJSON = JSON.stringify(canvas.toJSON());
+          var saveJSON = JSON.stringify(canvas.toJSON(['tokenID']));
 
-          vm.map.properties = saveJSON;
+          $scope.selectedMap.properties = saveJSON;
 
-            return mapModel.saveAsMap(vm.map, $scope.mode).then(function () {
+            return mapModel.saveAsMap($scope.selectedMap, $scope.mode).then(function () {
                 $('#theMapNameModal').modal('hide');
                 $('.modal-backdrop').hide();
                 $scope.goBack();
@@ -713,67 +770,6 @@
           }
         };
 
-        var consoleValue = (
-          '// clear canvas\n' +
-          'canvas.clear();\n\n' +
-          '// remove currently selected object\n' +
-          'canvas.remove(canvas.getActiveObject());\n\n' +
-          '// add red rectangle\n' +
-          'canvas.add(new fabric.Rect({\n' +
-          '  width: 50,\n' +
-          '  height: 50,\n' +
-          '  left: 50,\n' +
-          '  top: 50,\n' +
-          "  fill: 'rgb(255,0,0)'\n" +
-          '}));\n\n' +
-          '// add green, half-transparent circle\n' +
-          'canvas.add(new fabric.Circle({\n' +
-          '  radius: 40,\n' +
-          '  left: 50,\n' +
-          '  top: 50,\n' +
-          "  fill: 'rgb(0,255,0)',\n" +
-          '  opacity: 0.5\n' +
-          '}));\n'
-        );
-
-        var consoleJSONValue = (
-          '{"version":"3.2.0","objects":[{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":489,"top":255,"width":385,"height":245,"fill":"#15d37b","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]},{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":131,"top":319,"width":385,"height":245,"fill":"#59d0d4","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]},{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":373,"top":234,"width":385,"height":245,"fill":"#970097","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]},{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":201,"top":109,"width":385,"height":245,"fill":"#045c68","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]},{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":60,"top":310,"width":385,"height":245,"fill":"#2745d4","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]},{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":214,"top":388,"width":385,"height":245,"fill":"#0b1b65","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]},{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":517,"top":86,"width":385,"height":245,"fill":"#638442","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]},{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":235,"top":358,"width":385,"height":245,"fill":"#72f456","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]},{"type":"polygon","version":"3.2.0","originX":"left","originY":"top","left":401,"top":137,"width":385,"height":245,"fill":"#679084","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"points":[{"x":185,"y":0},{"x":250,"y":100},{"x":385,"y":170},{"x":0,"y":245}]}]}'
-        );
-
-
-
-        $scope.getConsoleJSON = function() {
-          return consoleJSONValue;
-        };
-        $scope.setConsoleJSON = function(value) {
-          consoleJSONValue = value;
-        };
-        $scope.getConsole = function() {
-          return consoleValue;
-        };
-        $scope.setConsole = function(value) {
-          consoleValue = value;
-        };
-
-        $scope.saveJSON = function(withDefaults) {
-          canvas.includeDefaultValues = withDefaults;
-          _saveJSON(JSON.stringify(canvas.toJSON()));
-        };
-
-        var _saveJSON = function(json) {
-          $scope.setConsoleJSON(json);
-        };
-
-        $scope.loadJSON = function() {
-          _loadJSON(consoleJSONValue);
-        };
-
-        var _loadJSON = function(json) {
-          canvas.loadFromJSON(json, function(){
-            canvas.renderAll();
-          });
-        };
-
         function initCustomization() {
           if (typeof Cufon !== 'undefined' && Cufon.fonts.delicious) {
             Cufon.fonts.delicious.offsetLeft = 75;
@@ -793,77 +789,6 @@
         }
 
         initCustomization();
-
-        function addTexts() {
-          var iText = new fabric.IText('lorem ipsum\ndolor\nsit Amet\nconsectetur', {
-            left: 100,
-            top: 150,
-            fontFamily: 'Helvetica',
-            fill: '#333',
-            styles: {
-              0: {
-                0: { fill: 'red', fontSize: 20 },
-                1: { fill: 'red', fontSize: 30 },
-                2: { fill: 'red', fontSize: 40 },
-                3: { fill: 'red', fontSize: 50 },
-                4: { fill: 'red', fontSize: 60 },
-
-                6: { textBackgroundColor: 'yellow' },
-                7: { textBackgroundColor: 'yellow' },
-                8: { textBackgroundColor: 'yellow' },
-                9: { textBackgroundColor: 'yellow' }
-              },
-              1: {
-                0: { textDecoration: 'underline' },
-                1: { textDecoration: 'underline' },
-                2: { fill: 'green', fontStyle: 'italic', textDecoration: 'underline' },
-                3: { fill: 'green', fontStyle: 'italic', textDecoration: 'underline' },
-                4: { fill: 'green', fontStyle: 'italic', textDecoration: 'underline' }
-              },
-              2: {
-                0: { fill: 'blue', fontWeight: 'bold' },
-                1: { fill: 'blue', fontWeight: 'bold' },
-                2: { fill: 'blue', fontWeight: 'bold' },
-
-                4: { fontFamily: 'Courier', textDecoration: 'line-through' },
-                5: { fontFamily: 'Courier', textDecoration: 'line-through' },
-                6: { fontFamily: 'Courier', textDecoration: 'line-through' },
-                7: { fontFamily: 'Courier', textDecoration: 'line-through' }
-              },
-              3: {
-                0: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' },
-                1: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' },
-                2: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' },
-                3: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' },
-                4: { fontFamily: 'Impact', fill: '#666', textDecoration: 'line-through' }
-              }
-            }
-          });
-
-          var iText2 = new fabric.IText('foo bar\nbaz\nquux', {
-            left: 400,
-            top: 150,
-            fontFamily: 'Helvetica',
-            fill: '#333',
-            styles: {
-              0: {
-                0: { fill: 'red' },
-                1: { fill: 'red' },
-                2: { fill: 'red' }
-              },
-              2: {
-                0: { fill: 'blue' },
-                1: { fill: 'blue' },
-                2: { fill: 'blue' },
-                3: { fill: 'blue' }
-              }
-            }
-          });
-
-          canvas.add(iText, iText2);
-        }
-
-        addTexts();
 
 
         $scope.getPreserveObjectStacking = function() {
@@ -1111,10 +1036,12 @@
 
           if ($scope.mapObject === false) {
 
-            let newToken = { attributes: {},
-                health: '',
-                mana: '',
-                stamina: ''
+            let newToken = {
+                health: '0',
+                mana: '0',
+                stamina: '0',
+                companyID: 'COMPID',
+                owner: '5d12fccb1b2ea11164aa3df9'
             };
 
             canvas.on('object:added', function() {
@@ -1160,160 +1087,290 @@
         };
       }
 
-      canvas.on('selection:created', function(e) {
+      function copy() {
+	//getObject then Copy it.
+	var object = canvas.getActiveObject();
+
+  if (object.tokenID) {
+    window.tokenType = 'token';
+  }
+
+  object.clone(function(cloned) {
+		_clipboard = cloned;
+	});
+}
+
+function paste() {
+	// clone again, so you can do multiple copies.
+	_clipboard.clone(function(clonedObj) {
+		canvas.discardActiveObject();
+		clonedObj.set({
+			left: clonedObj.left + 10,
+			top: clonedObj.top + 10,
+			evented: true,
+		});
+      let newToken = {
+          health: '0',
+          mana: '0',
+          stamina: '0',
+          companyID: 'COMPID',
+          owner: '5d12fccb1b2ea11164aa3df9'
+      };
+
+        if (window.tokenType === 'token') {
+          connection.post('/api/token/create', newToken).then( function (result) {
+            var tokens = canvas.getObjects();
+            for (token of tokens) {
+              if (!token.group) {
+                if(!token.tokenID) {
+            token.toObject = (function(toObject) {
+              return function() {
+                return fabric.util.object.extend(toObject.call(this), {
+                  tokenID: this.tokenID,
+                });
+              };
+            })(token.toObject);
+
+            token.tokenID = result.item._id;
+
+            }
+          }
+        }
+          });
+        }
+			canvas.add(clonedObj);
+
+		_clipboard.top += 10;
+		_clipboard.left += 10;
+		canvas.setActiveObject(clonedObj);
+		canvas.requestRenderAll();
+	});
+}
+
+      function positionOverlay(activeObject) {
+      var absCoords = canvas.getAbsoluteCoords(activeObject);
+      var zoom = canvas.getZoom();
+
+      var overlayTokens = $('#overlayToken'+ activeObject.tokenID);
+      var healthTokens = $('.health');
+      var manaTokens = $('.mana');
+      var staminaTokens = $('.stamina');
+      var tokenEdits = $('.tokenEdit');
+
+      for (overlayToken of overlayTokens) {
+          overlayToken.style.left = (absCoords.left * zoom) + canvas.viewportTransform[4] + 'px';
+          overlayToken.style.top = (absCoords.top * zoom) + canvas.viewportTransform[5] + 'px';
+          overlayToken.style.height = (activeObject.height * activeObject.scaleY) * zoom + 'px';
+          overlayToken.style.width = (activeObject.width  * activeObject.scaleX) * zoom + 'px';
+          overlayToken.style.pointerEvents = 'none';
+        }
+
+        for (healthToken of healthTokens) {
+          healthToken.style.left = '0px';
+          healthToken.style.top = -70 - (30 * zoom) +'px';
+          healthToken.style.width = (activeObject.width * activeObject.scaleX) * zoom + 'px';
+          healthToken.children[0].style.pointerEvents = 'auto';
+        }
+
+        for (manaToken of manaTokens) {
+          manaToken.style.left = '0px';
+          manaToken.style.top = -50 - (30 * zoom) + 'px';
+          manaToken.style.width = (activeObject.width * activeObject.scaleX) * zoom  + 'px';
+          manaToken.children[0].style.pointerEvents = 'auto';
+        }
+
+        for (staminaToken of staminaTokens) {
+          staminaToken.style.left = '0px';
+          staminaToken.style.top = -30 - (30 * zoom) + 'px';
+          staminaToken.style.width = (activeObject.width * activeObject.scaleX) * zoom + 'px';
+          staminaToken.children[0].style.pointerEvents = 'auto';
+          }
+
+        for (tokenEdit of tokenEdits) {
+          tokenEdit.style.top = (activeObject.height * activeObject.scaleY) * zoom +'px';
+          tokenEdit.style.left = (activeObject.width * activeObject.scaleX) * zoom + 'px';
+          tokenEdit.children[0].style.pointerEvents ='auto';
+        }
+      }
+
+      canvas.on('selection:created', function(opt) {
 
         var activeObject = canvas.getActiveObject();
-        console.log(e);
+
+
 
         if (activeObject.tokenID) {
           if ($('#overlayToken'+ activeObject.tokenID).length) {
 
+            activeObject.on('moving', function() { positionOverlay(activeObject) });
+            activeObject.on('scaling', function() { positionOverlay(activeObject) });
+            positionOverlay(activeObject);
+
             $('#overlayToken'+ activeObject.tokenID).removeClass('hide');
             $('#overlayToken'+ activeObject.tokenID).addClass('show');
 
-
-
-      // var id = activeObject.tokenID;
-
-      // connection.get('/api/token/find-one', id).then(function (result) {
-      //   console.log('hello');
-      //   console.log(result);
-      // })
-
-
-
-    // $scope.$broadcast('previousID', { id: activeObject.tokenID });
   } else {
 
-    $('#bd-wrapper').append('<div id="overlayToken'+ activeObject.tokenID +'" style="position:absolute">'+
-    '<div class="button">'+
-      '<div class="health">'+
-      '<h3   editable-text="healthNum" blur="submit">{{ healthNum }}</h3>'+
-      '</div>'+
-    '</div>'+
-    '<div class="button">'+
-      '<div class="mana">'+
-        '<h3   editable-text="manaNum" blur="submit">{{ manaNum }}</h3>'+
-      '</div>'+
-    '</div>'+
-    '<div class="button">'+
-      '<div class="stamina">'+
-        '<h3   editable-text="staminaNum" blur="submit">{{ staminaNum }}</h3>'+
-      '</div>'+
-    '</div>'+
-    '<div class="tokenEdit">'+
-      '<i class="fa fa-cogs"></i>'+
-    '</div>'+
-  '</div>')
-
-  var overlayToken = $('#overlayToken'+ activeObject.tokenID),
-  overlayTokenWidth = 100,
-  overlayTokenHeight = 100;
-
-  console.log(overlayToken);
-
-
-  function positionOverlay(activeObject) {
-  var absCoords = canvas.getAbsoluteCoords(activeObject);
-
-  overlayToken[0].style.left = (absCoords.left - overlayTokenWidth / 2) + 'px';
-  overlayToken[0].style.top = (absCoords.top - overlayTokenHeight / 2) + 'px';
-  }
-
-  activeObject.on('moving', function() { positionOverlay(activeObject) });
-  activeObject.on('scaling', function() { positionOverlay(activeObject) });
-  positionOverlay(activeObject);
-  }
-}
-
-  });
-
-  canvas.on('selection:updated', function(e) {
-
-    var activeObject = canvas.getActiveObject();
-    console.log(activeObject);
-
-    //$('#overlayToken'+ activeObject.tokenID).addClass('hide');
-
-    if (activeObject.tokenID) {
-      if ($('#overlayToken'+ activeObject.tokenID).length) {
-
-        $('#overlayToken'+ activeObject.tokenID).removeClass('hide');
-        $('#overlayToken'+ activeObject.tokenID).addClass('show');
-
-
-        var previousID = e.deselected[0].tokenID;
-
-        $('#overlayToken'+ previousID).removeClass('show');
-        $('#overlayToken'+ previousID).addClass('hide');
-
-    } else {
+    connection.get('/api/token/find-one', {id : activeObject.tokenID}).then(function(result) {
+      var health = result.item.health;
+      var mana = result.item.mana;
+      var stamina = result.item.stamina;
 
       $('#bd-wrapper').append('<div id="overlayToken'+ activeObject.tokenID +'" style="position:absolute">'+
-      '<div class="button">'+
-        '<div class="health">'+
-        '<h3   editable-text="healthNum" blur="submit">{{ healthNum }}</h3>'+
+        '<div class=" health progress" >'+
+        '<span id="healthBar'+activeObject.tokenID+'" class="progress-bar progress-bar-striped progress-bar-animated bg-danger"  style="width:'+health+'%">'+health+'</span>'+
         '</div>'+
-      '</div>'+
-      '<div class="button">'+
-        '<div class="mana">'+
-          '<h3   editable-text="manaNum" blur="submit">{{ manaNum }}</h3>'+
+        '<div class=" mana progress" >'+
+          '<span id="manaBar'+activeObject.tokenID+'" class="progress-bar progress-bar-striped progress-bar-animated" style="width:'+mana+'%">'+mana+'</span>'+
         '</div>'+
-      '</div>'+
-      '<div class="button">'+
-        '<div class="stamina">'+
-          '<h3   editable-text="staminaNum" blur="submit">{{ staminaNum }}</h3>'+
+        '<div class="stamina progress" >'+
+          '<span id="staminaBar'+activeObject.tokenID+'" class="progress-bar progress-bar-striped progress-bar-animated bg-success"  style="width:'+stamina+'%">'+stamina+'</span>'+
         '</div>'+
-      '</div>'+
-      '<div class="tokenEdit">'+
-        '<i class="fa fa-cogs"></i>'+
-      '</div>'+
+        '<div class="tokenEdit">'+
+          '<button id="settings'+activeObject.tokenID+'" class="btn" ng-click="openTokenModal">'+
+          '<i class="fa fa-cogs"></i>'+
+          '</button>'+
+        '</div>'+
     '</div>')
 
-    var overlayToken = $('#overlayToken'+ activeObject.tokenID),
-    overlayTokenWidth = 5,
-    overlayTokenHeight = 5;
-
-    function positionOverlay(activeObject) {
-    var absCoords = canvas.getAbsoluteCoords(activeObject);
-
-    overlayToken[0].style.left = (absCoords.left - overlayTokenWidth) + 'px';
-    overlayToken[0].style.top = (absCoords.top - overlayTokenHeight) + 'px';
-    }
+    $('#healthBar'+ activeObject.tokenID).attr('contenteditable', true);
+    $('#manaBar'+ activeObject.tokenID).attr('contenteditable', true);
+    $('#staminaBar'+ activeObject.tokenID).attr('contenteditable', true);
 
     activeObject.on('moving', function() { positionOverlay(activeObject) });
     activeObject.on('scaling', function() { positionOverlay(activeObject) });
     positionOverlay(activeObject);
 
-    var previousID = e.deselected[0].tokenID;
+    });
+  }
+}
 
-    $('#overlayToken'+ previousID).removeClass('show');
-    $('#overlayToken'+ previousID).addClass('hide');
+document.onkeydown = function(e) {
+  if (e.keyCode == 67) {
+    copy();
+    console.log('copy');
+  }
+
+  if (e.keyCode == 86) {
+    paste();
+    console.log('paste');
+  }
+};
+
+  });
+
+  canvas.on('selection:updated', function(opt) {
+
+    var previousID = opt.deselected[0].tokenID;
+    var activeObject = canvas.getActiveObject();
+
+    if (activeObject.tokenID) {
+      if ($('#overlayToken'+ activeObject.tokenID).length) {
+
+        $('#healthBar'+ activeObject.tokenID).attr('contenteditable', true);
+        $('#manaBar'+ activeObject.tokenID).attr('contenteditable', true);
+        $('#staminaBar'+ activeObject.tokenID).attr('contenteditable', true);
+
+        //$('#overlayToken'+ activeObject.tokenID).fadeOut();
+        $('#overlayToken'+ activeObject.tokenID).fadeIn();
+
+        connection.get('/api/token/find-one', {id : activeObject.tokenID}).then(function(result) {
+          var health = result.health;
+          var mana = result.mana;
+          var stamina = result.stamina;
+        });
+
+        var previousH = $('#healthBar'+ previousID).text();
+        var previousM = $('#manaBar'+ previousID).text();
+        var previousS = $('#staminaBar'+ previousID).text();
+
+        let updatedToken = {
+            _id: previousID,
+            health: previousH,
+            mana: previousM,
+            stamina: previousS,
+            companyID: 'COMPID',
+            owner: '5d12fccb1b2ea11164aa3df9'
+        };
+
+        connection.post('/api/token/update/' + previousID, updatedToken);
+
+        activeObject.on('moving', function() { positionOverlay(activeObject) });
+        activeObject.on('scaling', function() { positionOverlay(activeObject) });
+        positionOverlay(activeObject);
+
+        $('#overlayToken'+ previousID).fadeOut();
+        //$('#overlayToken'+ previousID).addClass('hide');
+
+    } else {
+
+      connection.get('/api/token/find-one', {id : activeObject.tokenID}).then(function(result) {
+        var healthNum = result.item.health;
+        var manaNum = result.item.mana;
+        var staminaNum = result.item.stamina;
+
+        $('#bd-wrapper').append('<div id="overlayToken'+ activeObject.tokenID +'" style="position:absolute">'+
+          '<div class=" health progress" >'+
+          '<span id="healthBar'+activeObject.tokenID+'" class="progress-bar progress-bar-striped progress-bar-animated bg-danger"  style="width:'+healthNum+'%">'+healthNum+'</span>'+
+          '</div>'+
+          '<div class=" mana progress" >'+
+            '<span id="manaBar'+activeObject.tokenID+'" class="progress-bar progress-bar-striped progress-bar-animated" style="width:'+manaNum+'%">'+manaNum+'</span>'+
+          '</div>'+
+          '<div class="stamina progress" >'+
+            '<span id="staminaBar'+activeObject.tokenID+'" class="progress-bar progress-bar-striped progress-bar-animated bg-success"  style="width:'+staminaNum+'%">'+staminaNum+'</span>'+
+          '</div>'+
+        '<div class="tokenEdit">'+
+          '<button id="settings'+activeObject.tokenID+'" class="btn" ng-click="openTokenModal">'+
+          '<i class="fa fa-cogs"></i>'+
+          '</button>'+
+        '</div>'+
+      '</div>')
+
+      $('#healthBar'+ activeObject.tokenID).attr('contenteditable', true);
+      $('#manaBar'+ activeObject.tokenID).attr('contenteditable', true);
+      $('#staminaBar'+ activeObject.tokenID).attr('contenteditable', true);
+
+      activeObject.on('moving', function() { positionOverlay(activeObject) });
+      activeObject.on('scaling', function() { positionOverlay(activeObject) });
+      positionOverlay(activeObject);
+
+      });
+
+    var previousID = opt.deselected[0].tokenID;
+
+    $('#overlayToken'+ previousID).fadeOut();
+    //$('#overlayToken'+ previousID).addClass('hide');
 
     }
   }
 
+  document.onpresskey = function(e) {
+    if (e.keyCode == 67) {
+      copy();
+    }
+
+    if (e.keyCode == 86) {
+      paste();
+    }
+
+    if (e.keyCode == 46) {
+        var activeObjects = canvas.getActiveObjects();
+        //canvas.discardActiveObject();
+        if (activeObjects.length) {
+          canvas.remove.apply(canvas, activeObjects);
+        }
+      };
+  };
   });
 
   canvas.on('before:selection:cleared', function() {
 
     var activeObject = canvas.getActiveObject();
 
-    // $scope.$on('previousID', function(event, args) {
-    //   var previousTokenID = args.id;
-    //   $('#overlayToken'+ previousTokenID).addClass('hide');
+    //$('#overlayToken'+ activeObject.tokenID).removeClass('show');
+    $('#overlayToken'+ activeObject.tokenID).fadeOut();
 
-    // });
-    $('#overlayToken'+ activeObject.tokenID).removeClass('show');
-    $('#overlayToken'+ activeObject.tokenID).addClass('hide');
-  })
-
-
-
-    // const modal = $uibModal.open({
-    //       component: 'appOverlayToken',
-    // });
-
+  });
 
     $scope.mapLockOff = function() {
         $scope.mapLock = false;
@@ -1344,7 +1401,6 @@
           if (object.tokenID) {
             object.set('selectable', true);
             object.set('hoverCursor', 'move');
-            console.log(object);
           }
         }
       }
@@ -1426,8 +1482,14 @@
            };
          });
 
+
+         $('#chat-msg').submit(function () {
+
+         })
+
          canvas.on('mouse:down', function(opt) {
            var evt = opt.e;
+
            if (evt.ctrlKey === true) {
               this.isDragging = true;
               this.selection = false;
@@ -1439,6 +1501,10 @@
         canvas.on('mouse:up', function(opt) {
           this.isDragging = false;
           this.selection = true;
+          var objects = canvas.getObjects();
+          for (object of objects) {
+            object.setCoords();
+          }
         })
 
         canvas.on('mouse:move', function(opt) {

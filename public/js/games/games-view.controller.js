@@ -3,46 +3,37 @@
 
     angular.module('app.games').controller('GamesViewController', GamesViewController);
 
-    GamesViewController.$inject = ['$scope', '$timeout', '$compile', 'game'];
+    GamesViewController.$inject = ['$scope', 'connection', '$timeout', '$compile', 'game'];
 
-    function GamesViewController ($scope, $timeout, $compile, game) {
+    function GamesViewController ($scope, connection, $timeout, $compile, game) {
+
         const vm = this;
-
-        vm.mode = 'preview';
+        $scope.mode = 'edit';
         vm.prompts = {};
         vm.game = game;
-        vm.getMap = getMap;
-        vm.promptChanged = promptChanged;
-        vm.getQueryForFilter = getQueryForFilter;
+        $scope.selectedGame = vm.game;
+        // vm.getMap = getMap;
+        console.log(vm.game);
 
-        activate();
+        if ($scope.mode === 'edit') {
 
-        function activate () {
-            loadHTML();
-        }
-
-        function getMap (mapID) {
-            return vm.game.maps.find(r => r.id === mapID);
-        }
-
-
-        function loadHTML () {
-            const pageViewer = document.getElementById('pageViewer');
-            pageViewer.insertAdjacentHTML('beforeend', vm.game.html);
-
-            if (vm.game.properties.rootStyle) {
-                pageViewer.setAttribute('style', vm.game.properties.rootStyle);
-            }
-
-            document.querySelectorAll('[map-view]').forEach(mapView => {
-                const mapAttr = mapView.getAttribute('map');
-                mapView.setAttribute('map', 'vm.' + mapAttr);
+            return connection.get('/api/gamesv2/get/' + game._id, { id: game._id }).then(function (data) {
+                var game = data.item;
             });
+        }
 
+        if($scope.mode === 'edit') {
+            connection.post('/api/gamesv2/update/' + game._id, game).then(function (result) {
+                if (result.result === 1) {
 
-            $compile(pageViewer)($scope);
+                }
+            });
+        }
 
+        console.log(game);
 
-    }
+        // function getMap (mapID) {
+        //     return vm.game.maps.find(m => m.id === mapID);
+        // }
   }
 })();
