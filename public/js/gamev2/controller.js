@@ -37,11 +37,11 @@ angular.module('app').controller('gamev2Ctrl', function ($scope, $location, $q,
         const modal = $uibModal.open({
             component: 'appPlayersImportModal',
         });
-        modal.result.then(mapID => {
-            userService.getUsers(mapID).then(function (map) {
+        modal.result.then(userID => {
+            userService.getCurrentUsers(mapID).then(function (user) {
                 if (map) {
                     map.id = map._id;
-                    $scope.selectedGame.maps.push(map);
+                    $scope.selectedGame.players.push(user);
                 } else {
                     noty({ text: 'Error : failed to import map', type: 'error', timeout: 3000 });
                 }
@@ -84,16 +84,18 @@ angular.module('app').controller('gamev2Ctrl', function ($scope, $location, $q,
     $scope.gameName = function () {
         if ($scope.mode === 'add') {
             $('#gameNameModal').modal('show');
+            $scope.gameNameSave();
           }
     };
 
     $scope.gameNameSave = function () {
+      return gamev2Model.saveAsGame($scope.selectedGame, $scope.mode).then(function () {
         $('#gameNameModal').modal('hide');
         $('.modal-backdrop').hide();
-        console.log($scope.selectedGame.maps);
-        connection.post('/api/gamesv2/create', $scope.selectedGame );
+
         // $scope.mode = 'edit';
         $scope.goBack();
+      });
     };
 
     $scope.getMap = function (mapID) {

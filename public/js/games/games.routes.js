@@ -6,13 +6,13 @@
     configure.$inject = ['$routeProvider'];
 
     function configure ($routeProvider) {
-        $routeProvider.when('/games/view/:gameID', {
+        $routeProvider.when('/games/edit/:gameID', {
             templateUrl: 'partials/games/edit.html',
             controller: 'GamesViewController',
             controllerAs: 'vm',
             resolve: {
-                game: function ($route, api) {
-                    return api.getGame($route.current.params.gameID);
+                game: function ($route, gamev2Model) {
+                    return gamev2Model.getGameDefinition($route.current.params.gameID, false);
                 },
             },
             isPublic: true,

@@ -1,11 +1,8 @@
-(function () {
-    'use strict';
+  angular.module('app.games').controller('GamesViewController', GamesViewController);
 
-    angular.module('app.games').controller('GamesViewController', GamesViewController);
+    GamesViewController.$inject = ['$scope', 'connection', 'gamev2Model', '$timeout', '$compile', 'game'];
 
-    GamesViewController.$inject = ['$scope', 'connection', '$timeout', '$compile', 'game'];
-
-    function GamesViewController ($scope, connection, $timeout, $compile, game) {
+    function GamesViewController ($scope, connection, gamev2Model, $timeout, $compile, game) {
 
         const vm = this;
         $scope.mode = 'edit';
@@ -36,4 +33,3 @@
         //     return vm.game.maps.find(m => m.id === mapID);
         // }
   }
-})();
