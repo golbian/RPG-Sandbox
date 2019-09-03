@@ -102,7 +102,7 @@ exports.Gamesv2Delete = async function (req, res) {
         game.nd_trash_deleted = true;
         game.nd_trash_deleted_date = new Date();
 
-        game.save().then(() => {
+        game.remove().then(() => {
             res.status(200).json({ result: 1, msg: 'Game deleted' });
         }, err => {
             console.error(err);

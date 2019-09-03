@@ -4,13 +4,23 @@
   </div>
   <div class="stats">
     <div class="healthModal">
-      <h4 editable-text="selectedToken.health" blur="submit">{{ selectedToken.health }}></h4>
+      <span class="pull-left">
+        <h3>Health: </h3>
+        <h4 editable-text="vm.item.health" blur="submit">{{ vm.item.health }}</h4>
+      </span>
     </div>
     <div class="manaModal">
-      <h4 editable-text="selectedToken.mana" blur="submit">{{ selectedToken.mana }}></h4>
+      <span>
+        <h3>Mana: </h3>
+        <h4 editable-text="vm.item.mana" blur="submit">{{ vm.item.mana }}</h4>
+      </span>
     </div>
     <div class="staminaModal">
-      <h4 editable-text="selectedToken.stamina" blur="submit">{{ selectedToken.stamina }}></h4>
+      <span>
+        <h3>Stamina: </h3>
+        <h4 editable-text="vm.item.stamina" blur="submit">{{ vm.item.stamina }}</h4>
+      </span>
     </div>
   </div>
+  <button class="btn btn-success" ng-click="Save()">Save</button>
 </div>

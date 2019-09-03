@@ -27,12 +27,12 @@
           <a class="btn btn-info" ng-href="/#/maps/new/" translate>New Map</a>
           <button class="btn btn-info" ng-click="importMap()" translate>Import Map</button>
         </div>
-        <span>Maps added to the Game: </span>
+        <span ng-if="selectedGame.maps.length != 0">Maps added to the Game: </span>
         <ul class="list-group">
           <a ng-href="/#/maps/edit/{{ item._id }}">
           <li ng-repeat="item in selectedGame.maps" style="width: 25%; display: flex; align-items: center; border-radius: 5px;" id="{{item.id}}" ng-if="item.mapName" class="list-group-item">{{ item.mapName }}
-              <a id="mapListItemDeleteBtn" href="" style="margin-left: 50px;" class="pull-right  list-button btn-delete" ng-click="deleteMap(item.id,item.mapName)"  uib-tooltip="{{ 'Click here to delete this report' | translate }}" tooltip-placement="bottom">
-                  <i class="fa fa-trash-o "  ></i>
+              <a id="mapListItemDeleteBtn" href="" style="margin-left: 50px;" class="pull-right  list-button btn-delete" ng-click="deleteMap(item.id,item.mapName)"  uib-tooltip="{{ 'Click here to delete this map' | translate }}" tooltip-placement="bottom">
+                  <i class="fa fa-trash-o"></i>
               </a>
           </li>
           </a>
@@ -40,11 +40,11 @@
         <div class="form-group">
           <button class="btn btn-info" ng-click="addPlayer()" translate>Add players</button>
         </div>
-        <span>Player added to Game: </span>
+        <span ng-if="selectedGame.players.length != 0">Player added to Game: </span>
         <ul class="list-group">
           <li ng-repeat="item in selectedGame.players" style="width: 25%; display: flex; align-items: center; border-radius: 5px;" id="{{item.id}}" ng-if="item.userName" class="list-group-item">{{ item.userName }}
               <a id="playerListItemDeleteBtn" href="" style="margin-left: 50px;" class="pull-right  list-button btn-delete" ng-click="deletePlayer(item.id,item.userName)"  uib-tooltip="{{ 'Click here to delete this player' | translate }}" tooltip-placement="bottom">
-                  <i class="fa fa-trash-o "  ></i>
+                  <i class="fa fa-trash-o"></i>
               </a>
           </li>
         </ul>

@@ -38,6 +38,8 @@ class Controller {
         var fields = {};
         var fieldsToGet = (req.query.fields) ? req.query.fields : false;
         var params = {};
+
+        console.log(req.query);
         if (req.query.page > 0) { params = (req.query.page) ? { skip: (page - 1) * perPage, limit: perPage } : {}; }
 
         if (req.query.sort) {

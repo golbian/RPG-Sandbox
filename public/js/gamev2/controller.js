@@ -1,9 +1,9 @@
-angular.module('app').controller('gamev2Ctrl', function ($scope, $location, $q,
+angular.module('app.games').controller('gamev2Ctrl', function ($scope, $location, $q,
   connection, $routeParams, mapModel, uuid2, gamev2Model, $timeout,
     gettextCatalog, $uibModal, userService, api) {
     $scope.mapModal = 'partials/map/edit.html';
     $scope.selectedGame = {};
-    $scope.selectedGame.gameName = 'newMap';
+    $scope.selectedGame.gameName = 'newGame';
     $scope.selectedGame.maps = [];
     $scope.selectedGame.players = [];
     $scope.selectedGame.properties = {};
@@ -38,9 +38,10 @@ angular.module('app').controller('gamev2Ctrl', function ($scope, $location, $q,
             component: 'appPlayersImportModal',
         });
         modal.result.then(userID => {
-            userService.getCurrentUsers(mapID).then(function (user) {
-                if (map) {
-                    map.id = map._id;
+            gamev2Model.getUser(userID).then(function (user) {
+                if (user) {
+                  console.log(user);
+                    user.id = user._id;
                     $scope.selectedGame.players.push(user);
                 } else {
                     noty({ text: 'Error : failed to import map', type: 'error', timeout: 3000 });
@@ -117,6 +118,16 @@ angular.module('app').controller('gamev2Ctrl', function ($scope, $location, $q,
                 $scope.selectedGame.maps.splice(i, 1);
 
                 $('#MAP_' + mapID).remove();
+            }
+        }
+    };
+
+    $scope.deletePlayer = function (userID, userName) {
+        for (var i in $scope.selectedGame.players) {
+            if ($scope.selectedGame.players[i].id === userID) {
+                $scope.selectedGame.players.splice(i, 1);
+
+                $('#USER_' + userID).remove();
             }
         }
     };

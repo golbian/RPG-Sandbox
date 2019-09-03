@@ -1,4 +1,5 @@
 angular.module('app').service('mapModel', function ($q, connection, FileSaver) {
+
     this.getMapDefinition = function (id, isLinked) {
         const url = '/api/maps/get-map/' + id;
         const params = { id: id, mode: 'edit', linked: isLinked };
@@ -6,8 +7,7 @@ angular.module('app').service('mapModel', function ($q, connection, FileSaver) {
         return connection.get(url, params).then(function (data) {
             return data.item;
         });
-    };
-
+    }
 
     function clone (obj) {
         if (!obj) { return obj; }

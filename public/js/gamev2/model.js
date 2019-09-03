@@ -9,6 +9,16 @@ angular.module('app').service('gamev2Model', function ($q, connection, FileSaver
       });
   };
 
+  this.getUser = function (id, isLinked) {
+      const url = '/api/admin/users/find-one';
+      const params = { id: id };
+
+      return connection.get(url, params).then(function (data) {
+        console.log(data.item);
+          return data.item;
+      });
+  };
+
   this.saveAsGame = function (game, mode) {
 
       // Cleaning up the map object

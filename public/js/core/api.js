@@ -10,6 +10,7 @@
             getCounts: getCounts,
             getUserData: getUserData,
             getUserObjects: getUserObjects,
+            getAllUsers: getAllUsers,
 
             mapsFindAll: mapsFindAll,
             deleteMap: deleteMap,
@@ -37,12 +38,16 @@
             return connection.get('/api/get-user-data');
         }
 
+        function getAllUsers (params) {
+          return connection.get('/api/admin/users/find-all', params);
+        }
+
         function getUserObjects () {
             return connection.get('/api/get-user-objects').then(res => res.items);
         }
 
-        function getTokenData () {
-            return connection.get('/api/get-token-data').then(res => res.items);
+        function getToken (id) {
+            return connection.get('/api/token/find-one/' + id, {id: id});
         }
 
         function mapsFindAll (params) {

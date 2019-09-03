@@ -23,7 +23,7 @@
     "body-parser": "^1.19.0",
     "bootstrap": "^4.3.1",
     "bootstrap-colorpicker": "^3.1.2",
-    "canvas-toBlob": "^1.0.0",
+    "canvas": "^2.6.0",
     "components-jqueryui": "^1.12.1",
     "config": "^3.1.0",
     "connect-mongo": "^2.0.3",
@@ -64,7 +64,6 @@
     "password-generator": "^2.2.0",
     "pg": "^7.11.0",
     "popper.js": "^1.15.0",
-    "socket.io": "^2.2.0",
     "ui-select": "^0.19.8",
     "ws": "^7.1.2",
     "xlsx": "^0.14.3"
