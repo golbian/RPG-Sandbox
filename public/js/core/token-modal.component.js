@@ -12,9 +12,9 @@
         },
     });
 
-    TokenModalController.$inject = ['connection','$scope'];
+    TokenModalController.$inject = ['connection','$scope', '$uibModal'];
 
-    function TokenModalController (connection, $scope) {
+    function TokenModalController (connection, $scope, $uibModal) {
         const vm = this;
         vm.item = {};
         vm.$onInit = $onInit;
@@ -29,7 +29,6 @@
             }
 
           $scope.Save = function(){
-            console.log(vm.item);
             connection.post('/api/token/update/' + vm.item.id, vm.item);
           }
         }

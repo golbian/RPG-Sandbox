@@ -55,8 +55,7 @@ gulp.task('dist:js', ['clean:js'], function () {
       'node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js',
       'node_modules/angular-gettext/dist/angular-gettext.min.js',
       'node_modules/d20/d20.js',
-      'node_modules/socket.io/lib/socket.js',
-      'node_modules/socket.io-client/lib/socket.js'
+      'node_modules/fabric-customise-controls/dist/customiseControls.js',
         /*
         'node_modules/canvas/lib/context2d.js',
         'node_modules/canvas/lib/bindings.js',

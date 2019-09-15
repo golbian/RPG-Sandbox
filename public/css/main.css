@@ -153,6 +153,11 @@ a:focus {
   flex-direction: row;
 }
 
+#fileGalleryModal {
+  display: flex;
+  margin-top: 90px;
+}
+
 #gamesForm span p {
   font-size: 25px;
 }
@@ -2571,7 +2576,7 @@ label[for] {
 }
 
 .files-modal-list {
-    height: 475px;
+    height: auto;
     overflow-y: scroll;
     overflow-x: hidden;
     list-style: none;
@@ -2607,12 +2612,6 @@ label[for] {
     margin-bottom: 10px;
 }
 
-.files-modal-window .modal-dialog {
-    width: 80%;
-
-    /* margin: 0px; */
-}
-
 .files-modal-window .modal-content {
     border-radius: 0 !important;
 }
@@ -2623,6 +2622,7 @@ label[for] {
     box-shadow: none;
     border-color: #f5f5f5;
     padding: 30px;
+    height: 400px;
 }
 
 .about-page a {

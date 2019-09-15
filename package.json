@@ -5,6 +5,7 @@
   "main": "server.js",
   "homepage": "https://github.com/golbian/Rpg-Sandbox#readme",
   "dependencies": {
+    "Sprite": "git+https://github.com/antonjb/Sprite.git",
     "angular": "^1.7.8",
     "angular-draganddrop": "github:biblibre/angular-draganddrop#semver:^0.2.3",
     "angular-file-saver": "^1.1.3",
@@ -23,7 +24,6 @@
     "body-parser": "^1.19.0",
     "bootstrap": "^4.3.1",
     "bootstrap-colorpicker": "^3.1.2",
-    "canvas": "^2.6.0",
     "components-jqueryui": "^1.12.1",
     "config": "^3.1.0",
     "connect-mongo": "^2.0.3",
@@ -38,6 +38,7 @@
     "express-session": "^1.16.1",
     "express-ws": "^4.0.0",
     "fabric": "^3.2.0",
+    "fabric-customise-controls": "^2.0.6-beta",
     "font-awesome": "^4.7.0",
     "gulp": "^3.9.1",
     "gulp-angular-gettext": "^2.2.0",

@@ -1,26 +1,33 @@
 <div class="modal-header">
-  <div class="attributes">
-    <button class="btn">Add attributes</button>
-  </div>
-  <div class="stats">
+  <div class="nav nav-tabs">
+<a class="nav-item nav-link active" style="font-size: 20px;" data-toggle="tab" data-target="#stats">Stats</a>
+<a class="nav-item nav-link" style="font-size: 20px;" data-toggle="tab"  data-target="#sprite">Sprite</a>
+</div>
+</div>
+<br>
+<div class="modal-content tab-content">
+  <div class="stats tab-pane active" id="stats">
     <div class="healthModal">
-      <span class="pull-left">
-        <h3>Health: </h3>
-        <h4 editable-text="vm.item.health" blur="submit">{{ vm.item.health }}</h4>
+      <span style="display:flex; flex-direction:row">
+        <h4>Health: </h4>
+        <h4 style="margin-left: 5%;" editable-text="vm.item.health" blur="submit">{{ vm.item.health }}</h4>
       </span>
     </div>
     <div class="manaModal">
-      <span>
-        <h3>Mana: </h3>
-        <h4 editable-text="vm.item.mana" blur="submit">{{ vm.item.mana }}</h4>
+      <span style="display:flex; flex-direction:row">
+        <h4>Mana: </h4>
+        <h4 style="margin-left: 5%;" editable-text="vm.item.mana" blur="submit">{{ vm.item.mana }}</h4>
       </span>
     </div>
     <div class="staminaModal">
-      <span>
-        <h3>Stamina: </h3>
-        <h4 editable-text="vm.item.stamina" blur="submit">{{ vm.item.stamina }}</h4>
+      <span style="display:flex; flex-direction:row">
+        <h4>Stamina: </h4>
+        <h4 style="margin-left: 5%;" editable-text="vm.item.stamina" blur="submit">{{ vm.item.stamina }}</h4>
       </span>
     </div>
   </div>
-  <button class="btn btn-success" ng-click="Save()">Save</button>
-</div>
+  <div class="sprite tab-pane" id="sprite">
+      <file-modal></file-modal>
+  </div>
+  </div>
+  <button class="btn btn-success pull-right" ng-click="Save()">Save</button>

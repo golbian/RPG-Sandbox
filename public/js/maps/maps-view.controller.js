@@ -37,6 +37,20 @@
                 if (data.type === 'roll') {
                   $('#chat-output').append('<div style="font-size:20px; font-family:Palatino Linotype, Book Antiqua, Palatino, serif; " class="rollMsg">'+'<span>'+ data.user +' : Rolling ('+ data.input +') => '+ data.output +'</span>'+'</div>');
                 }
+
+                if (data.type === 'objectModified') {
+                  var objects = canvas.getObjects();
+                  for (object of objects) {
+                    if (object.tokenID === data.id) {
+                      object.top = data.top;
+                      object.left = data.left;
+                      object.scaleX = data.scaleX;
+                      object.scaleY =data.scaleY;
+                      object.angle = data.angle;
+                    }
+                  }
+                  canvas.renderAll();
+                }
             });
 
 
@@ -78,8 +92,6 @@
           }
         });
       });
-
-
 
         $scope.initMapList = function () {
             $scope.navigation.page = 1;
@@ -1193,6 +1205,33 @@ function paste() {
         }
       }
 
+      canvas.on('object:modified', function(opt) {
+        var messages = {
+          type: 'objectModified',
+          top: opt.target.top,
+          left: opt.target.left,
+          id: opt.target.tokenID,
+          scaleX: opt.target.scaleX,
+          scaleY: opt.target.scaleY,
+          angle: opt.target.angle,
+        }
+
+        socket.send(JSON.stringify(messages));
+      });
+
+      canvas.on('object:removed', function(opt) {
+        var messages = {
+          type: 'objectModified',
+          top: opt.target.top,
+          left: opt.target.left,
+          id: opt.target.tokenID,
+          scaleX: opt.target.scaleX,
+          scaleY: opt.target.scaleY,
+        }
+
+        socket.send(JSON.stringify(messages));
+      });
+
       canvas.on('selection:created', function(opt) {
 
         var activeObject = canvas.getActiveObject();
@@ -1206,8 +1245,7 @@ function paste() {
             activeObject.on('scaling', function() { positionOverlay(activeObject) });
             positionOverlay(activeObject);
 
-            $('#overlayToken'+ activeObject.tokenID).removeClass('hide');
-            $('#overlayToken'+ activeObject.tokenID).addClass('show');
+            $('#overlayToken'+ activeObject.tokenID).fadeIn();
 
   } else {
 
@@ -1337,17 +1375,20 @@ document.onkeydown = function(e) {
         '</div>'+
       '</div>')
 
-       $('#settings'+activeObject.tokenID).click(function(){
-          const modal = $uibModal.open({
-              component: 'appTokenModal',
-          });
-        });
-
-
-
       $('#healthBar'+ activeObject.tokenID).attr('contenteditable', true);
       $('#manaBar'+ activeObject.tokenID).attr('contenteditable', true);
       $('#staminaBar'+ activeObject.tokenID).attr('contenteditable', true);
+
+      $('#settings'+activeObject.tokenID).click(function(){
+         const modal = $uibModal.open({
+             component: 'appTokenModal',
+             resolve: {
+               id: () => function() {
+                 return activeObject.tokenID;
+               },
+             },
+         });
+       });
 
       activeObject.on('moving', function() { positionOverlay(activeObject) });
       activeObject.on('scaling', function() { positionOverlay(activeObject) });
@@ -1382,110 +1423,6 @@ document.onkeydown = function(e) {
   };
   });
 
-//   fabric.Sprite = fabric.util.createClass(fabric.Image, {
-//
-//   type: 'sprite',
-//
-//   spriteWidth: 0,
-//   spriteHeight: 0,
-//   spriteIndex: 0,
-//   frameTime: 100,
-//
-//   initialize: function(element, options) {
-//     options || (options = { });
-//
-//     options.width = this.spriteWidth;
-//     options.height = this.spriteHeight;
-//
-//     this.callSuper('initialize', element, options);
-//
-//     this.createTmpCanvas();
-//     this.createSpriteImages();
-//   },
-//
-//   createTmpCanvas: function() {
-//     this.tmpCanvasEl = fabric.util.createCanvasElement();
-//     this.tmpCanvasEl.width = this.spriteWidth || this.width;
-//     this.tmpCanvasEl.height = this.spriteHeight || this.height;
-//   },
-//
-//   createSpriteImages: function() {
-//     this.spriteImages = [ ];
-//
-//     var steps = this._element.width / this.spriteWidth;
-//     for (var i = 0; i < steps; i++) {
-//       this.createSpriteImage(i);
-//     }
-//   },
-//
-//   createSpriteImage: function(i) {
-//     var tmpCtx = this.tmpCanvasEl.getContext('2d');
-//     tmpCtx.clearRect(0, 0, this.tmpCanvasEl.width, this.tmpCanvasEl.height);
-//     tmpCtx.drawImage(this._element, -i * this.spriteWidth, 0);
-//
-//     var dataURL = this.tmpCanvasEl.toDataURL('image/png');
-//     var tmpImg = fabric.util.createImage();
-//
-//     tmpImg.src = dataURL;
-//
-//     this.spriteImages.push(tmpImg);
-//   },
-//
-//   _render: function(ctx) {
-//     ctx.drawImage(
-//       this.spriteImages[this.spriteIndex],
-//       -this.width / 2,
-//       -this.height / 2
-//     );
-//   },
-//
-//   play: function() {
-//     var _this = this;
-//     this.animInterval = setInterval(function() {
-//
-//       _this.onPlay && _this.onPlay();
-//       _this.dirty = true;
-//       _this.spriteIndex++;
-//       if (_this.spriteIndex === _this.spriteImages.length) {
-//         _this.spriteIndex = 0;
-//       }
-//     }, this.frameTime);
-//   },
-//
-//   stop: function() {
-//     clearInterval(this.animInterval);
-//   }
-// });
-//
-// fabric.Sprite.fromURL = function(url, callback, imgOptions) {
-//   fabric.util.loadImage(url, function(img) {
-//     callback(new fabric.Sprite(img, imgOptions));
-//   });
-// };
-//
-// fabric.Sprite.async = true;
-//
-//       fabric.Sprite.fromURL('../../uploads/sprite.png', createSprite());
-//
-//
-//   function createSprite() {
-//     return function(sprite) {
-//       sprite.set({
-//         left:  0,
-//         top:  0,
-//       });
-//       canvas.add(sprite);
-//       setTimeout(function() {
-//         sprite.set('dirty', true);
-//         sprite.play();
-//       }, fabric.util.getRandomInt(1, 10) * 100);
-//     };
-//   }
-//
-//   (function render() {
-//     canvas.renderAll();
-//     fabric.util.requestAnimFrame(render);
-//   })();
 
   canvas.on('before:selection:cleared', function() {
 
