@@ -45,7 +45,7 @@
     "gulp-angular-templatecache": "^3.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-decomment": "^0.2.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-validate": "^2.0.0",
     "knex": "^0.17.0",
     "merge-stream": "^2.0.0",
