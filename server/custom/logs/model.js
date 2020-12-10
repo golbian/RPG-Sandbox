@@ -74,5 +74,5 @@ logsSchema.statics.adminFindAll = function (req, done) {
 };
 
 // var Log = mongoose.model("Log", logsSchema);
-var Logs = connection.model('Logs', logsSchema);
+var Logs = mongoose.model('Logs', logsSchema);
 module.exports = Logs;

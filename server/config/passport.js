@@ -2,13 +2,14 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const LocalStrategy = require('passport-local').Strategy;
 const RememberMeStrategy = require('passport-remember-me').Strategy;
+const mongoose = require("mongoose")
 
-var Users = connection.model('Users'); // require('../../models/users');
+var Users = mongoose.model('Users'); // require('../../models/users');
 
 module.exports = function (passport) {
     passport.serializeUser(function (user, done) {
         if (user.companyID) {
-            var Companies = connection.model('Companies');
+            var Companies = mongoose.model('Companies');
 
             Companies.findOne({companyCode: user.companyID}, function (err, company) {
                 if (company) {

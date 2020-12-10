@@ -1,4 +1,5 @@
-var Games = connection.model('Games');
+const mongoose = require("mongoose")
+var Games = mongoose.model('Games');
 
 const Controller = require('../../core/controller.js');
 

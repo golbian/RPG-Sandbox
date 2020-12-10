@@ -40,5 +40,5 @@ MapsSchema.methods.unshare = async function () {
     return this.save();
 };
 
-var Maps = connection.model('Maps', MapsSchema);
+var Maps = mongoose.model('Maps', MapsSchema);
 module.exports = Maps;

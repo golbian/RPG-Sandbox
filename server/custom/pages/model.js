@@ -20,5 +20,5 @@ var PagesSchema = new mongoose.Schema({
     createdOn: { type: Date }
 }, { collection: 'wst_Pages' });
 
-var Pages = connection.model('Pages', PagesSchema);
+var Pages = mongoose.model('Pages', PagesSchema);
 module.exports = Pages;

@@ -1,4 +1,5 @@
-const Gamesv2 = connection.model('Gamesv2');
+const mongoose = require("mongoose")
+const Gamesv2 = mongoose.model('Gamesv2');
 
 const Controller = require('../../core/controller.js');
 

@@ -1,4 +1,6 @@
-var Tokens = connection.model('Token');
+const mongoose = require("mongoose")
+
+var Tokens = mongoose.model('Token');
 
 const Controller = require('../../core/controller.js');
 

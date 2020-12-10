@@ -14,5 +14,5 @@ var CompaniesSchema = new mongoose.Schema({
     createdOn: { type: Date }
 }, { collection: 'wst_Companies' });
 
-var Companies = connection.model('Companies', CompaniesSchema);
+var Companies = mongoose.model('Companies', CompaniesSchema);
 module.exports = Companies;

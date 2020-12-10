@@ -9,5 +9,5 @@ var TokensSchema = new mongoose.Schema({
     nd_trash_deleted: { type: Boolean },
 }, { collection: 'wst_Tokens'});
 
-var Tokens = connection.model('Token', TokensSchema);
+var Tokens = mongoose.model('Token', TokensSchema);
 module.exports = Tokens;

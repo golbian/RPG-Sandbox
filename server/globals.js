@@ -1,7 +1,7 @@
 /* GLOBAL FUNCTIONS */
 const path = require('path');
 const debug = require('debug')('RPG-Sandbox:server');
-
+const mongoose = require("mongoose")
 
 var appRoot = path.join(__dirname, '..');
 global.appRoot = appRoot;
@@ -39,7 +39,7 @@ function restrictRole (roles) {
 global.restrictRole = restrictRole;
 
 function saveToLog (req, text, type, code, otherInfo, associatedID) {
-    var Logs = connection.model('Logs');
+    var Logs = mongoose.model('Logs');
 
     Logs.saveToLog(req, {text: text, type: type, code: code, associatedID: associatedID}, otherInfo, function () {
 

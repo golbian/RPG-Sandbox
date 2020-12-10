@@ -19,5 +19,5 @@ var GamesSchema = new mongoose.Schema({
     createdOn: { type: Date }
 }, { collection: 'wst_Games' });
 
-var Games = connection.model('Games', GamesSchema);
+var Games = mongoose.model('Games', GamesSchema);
 module.exports = Games;

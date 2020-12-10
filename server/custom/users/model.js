@@ -214,5 +214,5 @@ usersSchema.statics.findOrCreateGoogleUser = function (profile, done) {
     });
 };
 
-var Users = connection.model('Users', usersSchema);
+var Users = mongoose.model('Users', usersSchema);
 module.exports = Users;

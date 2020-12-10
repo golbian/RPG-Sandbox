@@ -49,5 +49,5 @@ Gamesv2Schema.methods.unshare = async function () {
     return this.save();
 };
 
-var Gamesv2 = connection.model('Gamesv2', Gamesv2Schema);
+var Gamesv2 = mongoose.model('Gamesv2', Gamesv2Schema);
 module.exports = Gamesv2;

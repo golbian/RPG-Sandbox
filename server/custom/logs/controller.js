@@ -1,4 +1,5 @@
-var Logs = connection.model('Logs');
+const mongoose = require("mongoose")
+var Logs = mongoose.model('Logs');
 
 /* LOGS */
 exports.logsSaveToLog = function (req, res) {

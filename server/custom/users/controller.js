@@ -1,5 +1,7 @@
-var Users = connection.model('Users');
-const Games = connection.model('Games');
+const mongoose = require("mongoose")
+
+var Users = mongoose.model('Users');
+const Games = mongoose.model('Games');
 const Controller = require('../../core/controller.js');
 
 class UsersController extends Controller {
@@ -27,7 +29,7 @@ exports.UsersCreate = function (req, res) {
     req.body.status = 'active';
     req.body.nd_trash_deleted = false;
 
-    var Users = connection.model('Users');
+    var Users = mongoose.model('Users');
     Users.createTheUser(req, res, req.body, function (result) {
         if (req.body.sendPassword && typeof thePassword !== 'undefined') {
             var recipients = [];
@@ -147,20 +149,20 @@ exports.getCounts = function (req, res) {
 
     if (isWSTADMIN) {
         // get all games
-        var Games = connection.model('Games');
+        var Games = mongoose.model('Games');
         Games.count({companyID: companyID, owner: req.user._id, nd_trash_deleted: false}, function (err, gamesCount) {
             if (err) { console.error(err); }
 
             theCounts.games = gamesCount;
             // get all maps
-            var Maps = connection.model('Maps');
+            var Maps = mongoose.model('Maps');
             Maps.count({companyID: companyID, owner: req.user._id, nd_trash_deleted: false}, function (err, mapsCount) {
                 if (err) { console.error(err); }
 
                 theCounts.maps = mapsCount;
 
                             // get all users
-                            var Users = connection.model('Users');
+                            var Users = mongoose.model('Users');
                             Users.count({companyID: companyID, nd_trash_deleted: false}, function (err, usersCount) {
                                 if (err) { console.error(err); }
 
@@ -170,13 +172,13 @@ exports.getCounts = function (req, res) {
                 });
     } else {
         // get all games
-        var Games = connection.model('Games');
+        var Games = mongoose.model('Games');
         Games.count({companyID: companyID, owner: req.user._id, nd_trash_deleted: false}, function (err, gameCount) {
             if (err) { console.error(err); }
 
             theCounts.games = gameCount;
             // get all maps
-            var Maps = connection.model('Maps');
+            var Maps = mongoose.model('Maps');
             Maps.count({companyID: companyID, owner: req.user._id, nd_trash_deleted: false}, function (err, mapCount) {
                 if (err) { console.error(err); }
 
@@ -192,13 +194,13 @@ exports.getCountsForUser = function (req, res) {
     var theCounts = {};
 
     // get all games
-    var Games = connection.model('Games');
+    var Games = mongoose.model('Games');
     Games.count({companyID: companyID, owner: userID, isPublic: true, nd_trash_deleted: false}, function (err, gamesCount) {
         if (err) { console.error(err); }
 
         theCounts.publishedGames = gamesCount;
         // get all maps
-        var Maps = connection.model('Maps');
+        var Maps = mongoose.model('Maps');
         Maps.count({companyID: companyID, owner: userID, isPublic: true, nd_trash_deleted: false}, function (err, mapsCount) {
             if (err) { console.error(err); }
 
@@ -209,7 +211,7 @@ exports.getCountsForUser = function (req, res) {
 
                 theCounts.privateGames = privateGamesCount;
 
-                var Maps = connection.model('Maps');
+                var Maps = mongoose.model('Maps');
                 Maps.count({companyID: companyID, owner: userID, isPublic: false, nd_trash_deleted: false}, function (err, privateMapsCount) {
                     if (err) { console.error(err); }
 
@@ -225,7 +227,7 @@ exports.getUserGames = function (req, res) {
     var page = (req.query.page) ? req.query.page : 1;
     var userID = req.query.userID;
     var companyID = req.user.companyID;
-    var Games = connection.model('Games');
+    var Games = mongoose.model('Games');
     Games.find({companyID: companyID, owner: userID, nd_trash_deleted: false}, {gameName: 1, parentFolder: 1, isPublic: 1, gameDescription: 1, status: 1}, function (err, games) {
         if (err) { console.error(err); }
 
@@ -237,7 +239,7 @@ exports.getUserMaps = function (req, res) {
     var page = (req.query.page) ? req.query.page : 1;
     var userID = req.query.userID;
     var companyID = req.user.companyID;
-    var Maps = connection.model('Maps');
+    var Maps = mongoose.model('Maps');
     Maps.find({companyID: companyID, owner: userID, nd_trash_deleted: false}, {mapName: 1, parentFolder: 1, isPublic: 1, mapDescription: 1, status: 1}, function (err, maps) {
         if (err) { console.error(err); }
 
@@ -247,7 +249,7 @@ exports.getUserMaps = function (req, res) {
 
 
 exports.getUserData = function (req, res) {
-    var Companies = connection.model('Companies');
+    var Companies = mongoose.model('Companies');
     Companies.findOne({companyID: req.user.companyID, nd_trash_deleted: false}, {}, function (err, company) {
         if (err) { console.error(err); }
 
@@ -307,7 +309,7 @@ exports.getUserData = function (req, res) {
         }
 
         if (req.user.roles.length > 0 && !isWSTADMIN) {
-            var Roles = connection.model('Roles');
+            var Roles = mongoose.model('Roles');
             Roles.find({ _id: { $in: req.user.roles } }, {}, function (err, roles) {
                 if (err) { console.error(err); }
 
@@ -351,7 +353,7 @@ exports.getUserData = function (req, res) {
     });
 };
 exports.getUserOtherData = function (req, res) {
-    var Users = connection.model('Users');
+    var Users = mongoose.model('Users');
     Users.findOne({_id: req.user._id}, {}, function (err, user) {
         if (err) { console.error(err); }
 
@@ -360,7 +362,7 @@ exports.getUserOtherData = function (req, res) {
 };
 
 exports.getUserObjects = async function (req, res) {
-    const Companies = connection.model('Companies');
+    const Companies = mongoose.model('Companies');
     const query = {
         'companyID': req.user.companyID,
         'nd_trash_deleted': false
@@ -375,7 +377,7 @@ exports.getUserObjects = async function (req, res) {
         await getFolderStructureForWSTADMIN(folders, 0);
     } else {
         if (req.user.roles.length > 0) {
-            const Roles = connection.model('Roles');
+            const Roles = mongoose.model('Roles');
             const query = {
                 '_id': { '$in': req.user.roles },
                 'companyID': req.user.companyID
@@ -484,7 +486,7 @@ async function getGamesForFolder (idfolder, grant) {
     var nodes = [];
 
     if (!grant || grant.executeGames) {
-        const Games = connection.model('Games');
+        const Games = mongoose.model('Games');
 
         const query = {
             'nd_trash_deleted': false,
@@ -510,7 +512,7 @@ async function getMapsForFolder (idfolder, grant) {
     var nodes = [];
 
     if (!grant || grant.executeMaps) {
-        const Maps = connection.model('Maps');
+        const Maps = mongoose.model('Maps');
 
         const query = {
             'nd_trash_deleted': false,
@@ -541,7 +543,7 @@ async function getNoFolderMaps () {
 }
 
 exports.getUserLastExecutions = function (req, res) {
-    var statistics = connection.model('statistics');
+    var statistics = mongoose.model('statistics');
 
     let find;
     if (req.session.isWSTADMIN) {

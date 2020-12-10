@@ -1,4 +1,5 @@
-var Maps = connection.model('Maps');
+const mongoose = require("mongoose")
+var Maps = mongoose.model('Maps');
 
 const Controller = require('../../core/controller.js');
 

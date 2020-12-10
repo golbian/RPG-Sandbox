@@ -35,5 +35,5 @@ statisticsSchema.statics.save = function (req, data, done) {
     });
 };
 
-var statistics = connection.model('statistics', statisticsSchema);
+var statistics = mongoose.model('statistics', statisticsSchema);
 module.exports = statistics;

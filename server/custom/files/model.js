@@ -13,5 +13,5 @@ var FilesSchema = new mongoose.Schema({
     createdOn: { type: Date }
 }, { collection: 'wst_Files' });
 
-var Files = connection.model('Files', FilesSchema);
+var Files = mongoose.model('Files', FilesSchema);
 module.exports = Files;

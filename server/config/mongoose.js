@@ -7,32 +7,30 @@ module.exports = function (_, done) {
         // global.connection = mongoose.connect('tingodb:'+global.tingo_db_path);
         debug('tingo DB connection');
         global.TUNGUS_DB_OPTIONS = { nativeObjectID: true, searchInArray: true };
-        global.connection = mongoose.connect('mongodb://data');
+        global.connection = mongoose.connect('mongodb://data', { useNewUrlParser: true } );
     } else {
-        const dbURI = config.get('db');
-        debug('mongo DB connection');
-        mongoose.Promise = global.Promise;
-        global.connection = mongoose.createConnection(dbURI, { server: { poolSize: 5 } });
+        global.connection = mongoose
+        .connect("mongodb://localhost:27017/rpgSandbox", {
+          useNewUrlParser: true,
+          useUnifiedTopology: true
+        }).then(()=>{
+            // new User({
+            //     name: "admin",
+            //     readOnly: false,
+            //     canCreate: true,
+            //     canUpdate: true,
+            //   }).save(err => {
+            //     if (err) {
+            //       console.log("error", err);
+            //     }
+            //     console.log("added 'admin' to roles collection");
+            //   });
+            console.log("Connected to the database")
+        }).catch(err => {
+            console.log("Cannot connect to the database!", err);
+            process.exit();
+        })
 
-        // CONNECTION EVENTS
-        // When successfully connected
-        connection.on('connected', function () {
-            if (typeof done !== 'undefined') {
-                done();
-            } else {
-                debug('Mongoose connection open to ' + dbURI);
-            }
-        });
-
-        // If the connection throws an error
-        connection.on('error', function (err) {
-            console.error('Mongoose default connection error: ' + err);
-        });
-
-        // When the connection is disconnected
-        connection.on('disconnected', function () {
-            debug('Mongoose default connection disconnected');
-        });
     }
 
     // If the Node process ends, close the Mongoose connection

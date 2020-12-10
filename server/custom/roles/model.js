@@ -19,5 +19,5 @@ var RolesSchema = new mongoose.Schema({
     createdOn: { type: Date }
 }, { collection: 'wst_Roles' });
 
-var Roles = connection.model('Roles', RolesSchema);
+var Roles = mongoose.model('Roles', RolesSchema);
 module.exports = Roles;

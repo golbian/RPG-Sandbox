@@ -1,4 +1,6 @@
-var Pages = connection.model('Pages');
+const mongoose = require("mongoose")
+
+var Pages = mongoose.model('Pages');
 
 const Controller = require('../../core/controller.js');
 
