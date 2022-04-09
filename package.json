@@ -50,7 +50,7 @@
     "knex": "^0.17.0",
     "merge-stream": "^2.0.0",
     "migrate-mongo": "^8.1.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mongoose": "^5.11.6",
     "mssql": "^5.1.0",
     "multer": "^1.4.1",
