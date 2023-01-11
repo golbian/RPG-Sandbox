@@ -47,7 +47,7 @@
     "gulp-decomment": "^0.2.0",
     "jquery": "^3.5.1",
     "jquery-validate": "^2.0.0",
-    "knex": "^0.17.0",
+    "knex": "^2.4.0",
     "merge-stream": "^2.0.0",
     "migrate-mongo": "^8.1.4",
     "moment": "^2.24.0",
